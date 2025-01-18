@@ -1,20 +1,23 @@
 <script setup lang="ts">
-// import Sidebar from './components/Sidebar.vue'
 import DrawerUp from './components/DrawerUp.vue'
-import First from './components/First.vue'
-import Footer from './components/Footer.vue';
+import First from './views/First.vue'
+import Footer from './components/Footer.vue'
 
+import { onMounted } from 'vue'
+import { useUserStore } from './stores/useUserStore'
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  userStore.initAuthPersistence()
+})
 </script>
 
 <template>
   <div>
     <DrawerUp />
-
-    <!-- <router-view /> -->
     <First />
-
-    <!-- <Sidebar /> -->
-    <Footer/>
+    <Footer />
+    <router-view />
   </div>
-
 </template>
