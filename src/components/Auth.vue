@@ -4,15 +4,17 @@ import { supabase } from '../supabase'
 
 const loading = ref(false)
 const email = ref('')
+const password = ref('') // Add a ref for the password
 
 const handleLogin = async () => {
   try {
     loading.value = true
-    const { error } = await supabase.auth.signInWithOtp({
+    const { user, error } = await supabase.auth.signInWithPassword({
       email: email.value,
+      password: password.value, // Use the password ref
     })
     if (error) throw error
-    alert('Check your email for the login link!')
+    alert('Successfully logged in!')
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)
@@ -26,15 +28,17 @@ const handleLogin = async () => {
 <template>
   <form class="row flex-center flex" @submit.prevent="handleLogin">
     <div class="col-6 form-widget">
-      <p class="description">Sign in </p>
       <div>
         <input class="inputField" required type="email" placeholder="... email" v-model="email" />
+      </div>
+      <div>
+        <input class="inputField" required type="password" placeholder="... password" v-model="password" /> <!-- Add password input -->
       </div>
       <div>
         <input
           type="submit"
           class="button block"
-          :value="loading ? 'Loading' : 'Send magic link'"
+          :value="loading ? 'Loading' : 'Sign In'"
           :disabled="loading"
         />
       </div>
