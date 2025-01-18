@@ -1,8 +1,8 @@
 <script setup lang="ts">
-// import Sidebar from './components/Sidebar.vue'
 import DrawerUp from './components/DrawerUp.vue'
 import First from './components/First.vue'
-import Footer from './components/Footer.vue';
+import Footer from './components/Footer.vue'
+
 
 </script>
 
@@ -10,11 +10,7 @@ import Footer from './components/Footer.vue';
   <div>
     <DrawerUp />
 
-    <!-- <router-view /> -->
     <First />
-
-    <!-- <Sidebar /> -->
     <Footer/>
   </div>
-
 </template>
