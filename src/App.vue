@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import DrawerUp from './components/DrawerUp.vue'
-import First from './views/First.vue'
 import Footer from './components/Footer.vue'
 
 import { onMounted } from 'vue'
@@ -16,8 +15,7 @@ onMounted(() => {
 <template>
   <div>
     <DrawerUp />
-    <First />
-    <Footer />
     <router-view />
+    <Footer />
   </div>
 </template>

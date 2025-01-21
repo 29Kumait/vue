@@ -56,9 +56,7 @@
       <p> Transparency with a modern glass effect.</p>
     </div>
 
-    <!-- Motion Section with Theme Variables (Requires Vue motion library) -->
     <!-- Example usage with a motion component -->
-    <div class="relative min-h-screen py-16 bg-gray-50">
       <!-- Animate Container -->
       <div class="spacious-container mx-auto max-w-5xl">
         <h1 class="text-4xl font-bold mb-8">Tailwind &amp; Beta </h1>
@@ -68,19 +66,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Another motion block -->
-    <div class="relative bg-gray-50 min-h-screen py-16">
-
-
-
-      <!-- Gradient Card -->
-      <div class="gradient-card glow-effect mt-16">
-        <h2 class="text-xl font-bold">Modern Colors</h2>
-        <p>Experience vibrant and accessible design systems.</p>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">

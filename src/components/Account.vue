@@ -1,15 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { supabase } from '../supabase'
-import { onMounted, ref, toRefs } from 'vue'
+import { onMounted, ref } from 'vue'
 import Avatar from './Avatar.vue'
-
-const props = defineProps(['session'])
-const { session } = toRefs(props)
+import { useUserStore } from '../stores/useUserStore'
 
 const loading = ref(true)
 const username = ref('')
-const website = ref('')
 const avatar_url = ref('')
+
+const userStore = useUserStore()
 
 onMounted(() => {
   getProfile()
@@ -18,22 +17,34 @@ onMounted(() => {
 async function getProfile() {
   try {
     loading.value = true
-    const { user } = session.value
+    const user = userStore.user
+    if (!user) throw new Error('Not logged in!')
 
     const { data, error, status } = await supabase
       .from('profiles')
-      .select(`username, website, avatar_url`)
-      .eq('id', user.id)
+      .select('username, avatar_url')
+      .eq('user_id', user.id)
       .single()
 
-    if (error && status !== 406) throw error
+    if (error && status !== 406) {
+      throw error
+    }
 
     if (data) {
-      username.value = data.username
-      website.value = data.website
-      avatar_url.value = data.avatar_url
+      username.value = data.username || user.email // Default to email if username is null
+      avatar_url.value = data.avatar_url || ''
+    } else {
+      // If no profile exists, create it with username as email
+      await supabase.from('profiles').insert({
+        user_id: user.id,
+        username: user.email,
+        avatar_url: null,
+        updated_at: new Date(),
+      })
+      username.value = user.email || ''
+      avatar_url.value = ''
     }
-  } catch (error) {
+  } catch (error: any) {
     alert(error.message)
   } finally {
     loading.value = false
@@ -43,20 +54,45 @@ async function getProfile() {
 async function updateProfile() {
   try {
     loading.value = true
-    const { user } = session.value
+    const user = userStore.user
+    if (!user) throw new Error('Not logged in!')
 
     const updates = {
-      id: user.id,
-      username: username.value,
-      website: website.value,
+      user_id: user.id,
+      username: username.value || user.email, // Fallback to email
       avatar_url: avatar_url.value,
       updated_at: new Date(),
     }
 
-    const { error } = await supabase.from('profiles').upsert(updates)
+    // Check if the profile exists
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
 
-    if (error) throw error
-  } catch (error) {
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      throw fetchError
+    }
+
+    if (existingProfile) {
+      // Update existing profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('user_id', user.id)
+      if (updateError) throw updateError
+    } else {
+      // Insert new profile
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert(updates)
+      if (insertError) throw insertError
+    }
+
+    // Re-fetch profile to update the component state
+    await getProfile()
+  } catch (error: any) {
     alert(error.message)
   } finally {
     loading.value = false
@@ -66,9 +102,8 @@ async function updateProfile() {
 async function signOut() {
   try {
     loading.value = true
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-  } catch (error) {
+    await userStore.signOut()
+  } catch (error: any) {
     alert(error.message)
   } finally {
     loading.value = false
@@ -77,33 +112,43 @@ async function signOut() {
 </script>
 
 <template>
-  <form class="form-widget" @submit.prevent="updateProfile">
-    <Avatar v-model:path="avatar_url" @upload="updateProfile" size="10" />
+  <div class="max-w-md mx-auto p-6 space-y-6 border border-gray-300 rounded-md shadow-md bg-white text-gray-800">
+    <form @submit.prevent="updateProfile" class="space-y-4">
+      <!-- Avatar Upload -->
+      <div class="flex justify-center">
+        <Avatar v-model:path="avatar_url" @upload="updateProfile" :size="10" />
+      </div>
 
-    <div>
-      <label for="email">Email</label>
-      <input id="email" type="text" :value="session.user.email" disabled />
-    </div>
-    <div>
-      <label for="username">Name</label>
-      <input id="username" type="text" v-model="username" />
-    </div>
-    <div>
-      <label for="website">Website</label>
-      <input id="website" type="url" v-model="website" />
-    </div>
+      <!-- Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium mb-1">Name</label>
+        <input id="username" type="text" v-model="username" required
+          class="w-full p-2 border border-gray-300 rounded-md focus:outline-none" />
+      </div>
 
-    <div>
-      <input
-        type="submit"
-        class="button primary block"
-        :value="loading ? 'Loading ...' : 'Update'"
-        :disabled="loading"
-      />
-    </div>
+      <!-- Email (Disabled) -->
+      <div>
+        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+        <input id="email" type="email" :value="userStore.user?.email" disabled
+          class="w-full p-2 border border-gray-300 rounded-md focus:outline-none bg-gray-100" />
+      </div>
 
-    <div>
-      <button class="button block" @click="signOut" :disabled="loading">Sign Out</button>
-    </div>
-  </form>
+
+
+      <!-- Buttons -->
+      <div class="flex justify-between">
+        <button type="submit"
+          class="px-4 py-2 bg-neon-lime text-white rounded-md shadow hover:bg-neon-pink disabled:opacity-50"
+          :disabled="loading">
+          {{ loading ? 'Updating...' : 'Update' }}
+        </button>
+
+        <button type="button" @click="signOut"
+          class="px-4 py-2 bg-neon-fuchsia text-white rounded-md shadow hover:bg-neon-pink disabled:opacity-50"
+          :disabled="loading">
+          Sign Out
+        </button>
+      </div>
+    </form>
+  </div>
 </template>
