@@ -45,17 +45,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-const isSidebarOpen = ref(false);
+const isSidebarOpen = ref(false)
 
 function toggleSidebar(): void {
-  isSidebarOpen.value = !isSidebarOpen.value;
+  isSidebarOpen.value = !isSidebarOpen.value
 }
 
 function closeSidebar(): void {
-  isSidebarOpen.value = false;
+  isSidebarOpen.value = false
 }
+
+// Watch the route, close sidebar on change:
+const route = useRoute()
+watch(
+  () => route.fullPath, 
+  () => {
+    // whenever the route changes, close the sidebar
+    isSidebarOpen.value = false
+  }
+)
 </script>
 
 <style scoped></style>
