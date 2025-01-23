@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useAvatar } from '../composables/useAvatar'
+import { useNotificationStore } from '../stores/useNotificationStore'
+
+const notificationStore = useNotificationStore()
 
 const props = defineProps({
   path: { type: String, default: '' },
@@ -39,7 +42,7 @@ async function handleFileChange(evt: Event) {
     emit('update:path', path)
     emit('upload')
   } catch (err) {
-    alert((err as Error).message)
+    notificationStore.addNotification('error', (err as Error).message)
   }
 }
 </script>
