@@ -1,26 +1,19 @@
 <template>
   <Drawer>
     <template #sidebar-header>
-      <h1 class="text-xl font-bold">Title</h1>
+      <h1 class="text-xl font-bold"> Account </h1>
     </template>
     <template #sidebar-content>
-      <div class="container" style="padding: 50px 0 100px 0">
         <div v-if="isAuthenticated">
           <Account />
         </div>
         <div v-else>
-          <div>
+          <div class="@container">
             <div class="flex justify-around mb-4">
-              <button
-                @click="isSignupMode = false"
-                :class="{ 'font-bold': !isSignupMode }"
-              >
+              <button @click="isSignupMode = false" :class="{ 'font-bold': !isSignupMode }">
                 Login
               </button>
-              <button
-                @click="isSignupMode = true"
-                :class="{ 'font-bold': isSignupMode }"
-              >
+              <button @click="isSignupMode = true" :class="{ 'font-bold': isSignupMode }">
                 Sign Up
               </button>
             </div>
@@ -32,7 +25,6 @@
             </div>
           </div>
         </div>
-      </div>
     </template>
   </Drawer>
 </template>
