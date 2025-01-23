@@ -1,9 +1,12 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
+import { useNotificationStore } from '../stores/useNotificationStore'
+
 
 export function useAvatar() {
     const uploading = ref(false)
     const imageUrl = ref('')
+    const notificationStore = useNotificationStore()
 
     async function downloadImage(filePath: string) {
         try {
@@ -11,7 +14,7 @@ export function useAvatar() {
             if (error) throw error
             imageUrl.value = URL.createObjectURL(data)
         } catch (err) {
-            console.error('Error downloading image:', err)
+            handleError(err)
         }
     }
 
@@ -22,10 +25,20 @@ export function useAvatar() {
             const filePath = `${Math.random()}.${fileExt}`
             const { error } = await supabase.storage.from('avatars').upload(filePath, file)
             if (error) throw error
+            notificationStore.addNotification('success', 'Avatar uploaded successfully!', 3000)
             return filePath
+        } catch (err) {
+            handleError(err)
+            throw err
         } finally {
             uploading.value = false
         }
+    }
+
+    function handleError(err: unknown) {
+        const e = err as Error
+        console.error(e)
+        notificationStore.addNotification('error', e.message, 5000)
     }
 
     return {

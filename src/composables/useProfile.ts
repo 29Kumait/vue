@@ -1,9 +1,12 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
 import type { User } from '@supabase/supabase-js'
+import { useNotificationStore } from '../stores/useNotificationStore'
 
 
 export function useProfile() {
+    const notificationStore = useNotificationStore()
+
     const loading = ref(false)
     const errorMsg = ref('')
     const username = ref('')
@@ -34,6 +37,7 @@ export function useProfile() {
                     updated_at: new Date(),
                 })
                 if (insertError) throw insertError
+                notificationStore.addNotification('success', 'Avatar uploaded!', 3000)
                 username.value = user.email || ''
                 avatarUrl.value = ''
             } else {
@@ -44,6 +48,7 @@ export function useProfile() {
         } catch (err) {
             const e = err as Error
             errorMsg.value = e.message
+            notificationStore.addNotification('error', e.message, 5000)
         } finally {
             loading.value = false
         }
@@ -68,6 +73,7 @@ export function useProfile() {
                 .upsert(updates, { onConflict: 'user_id' })
 
             if (error) throw error
+            notificationStore.addNotification('success', 'Profile updated successfully!', 3000)
 
             // re-fetch or just trust the update
             username.value = newUsername
@@ -75,6 +81,7 @@ export function useProfile() {
         } catch (err) {
             const e = err as Error
             errorMsg.value = e.message
+            notificationStore.addNotification('error', e.message, 5000)
         } finally {
             loading.value = false
         }
