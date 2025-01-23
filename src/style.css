@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* @variant dark (&:where(.dark, .dark *)); */
 
 
 @theme {
@@ -23,11 +26,23 @@
   --color-secondary: var(--color-green-500, oklch(0.7 0.12 80));
   --color-accent: var(--color-pink-500, oklch(0.6 0.15 120));
 
+
   --color-p3-light: color(display-p3 0.98 0.8 0.1);
   --color-p3-dark: color(display-p3 0.2 0.5 0.3);
   --color-p3-accent: color(display-p3 0.5 0.7 0.6);
   --color-p3-blue: color(display-p3 0.1 0.2 0.8);
   --color-p3-red: color(display-p3 0.8 0.1 0.2);
+  --color-p3-green: color(display-p3 0.1 0.8 0.2);
+  --color-p3-purple: color(display-p3 0.5 0.1 0.8);
+  --color-p3-yellow: color(display-p3 0.8 0.8 0.1);
+  --color-p3-cyan: color(display-p3 0.1 0.8 0.8);
+  --color-p3-indigo: color(display-p3 0.1 0.2 0.5);
+  --color-p3-brown: color(display-p3 0.5 0.3 0.2);
+  --color-p3-gray: color(display-p3 0.5 0.5 0.5);
+  --color-p3-orange: color(display-p3 0.8 0.5 0.1);
+  --color-p3-pink: color(display-p3 0.8 0.1 0.5);
+  --color-p3-teal: color(display-p3 0.1 0.5 0.5);
+
 
   --color-oklch-yellow: oklch(80% 0.1 90);
   --color-oklch-pink: oklch(60% 0.3 300);
@@ -222,17 +237,15 @@
 }
 
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--color-p3-indigo);
+    background-color: var(--color-p3-gray);
+
   }
 
   a:hover {
     color: #747bff;
   }
 
-  button {
-    background-color: #f9f9f9;
-  }
 }

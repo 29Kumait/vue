@@ -1,12 +1,12 @@
 <template>
     <button
       @click="toggleSidebar"
-      class="fixed top-0 right-0 min-h-screen px-3 py-2 text-xl text-white bg-a-cyan text-scale-black transition-all duration-300 ease-snappy hover:bg-green-700 rounded-md shadow-md inset-shadow-sm inset-shadow-white/20 ring ring-blue-600 inset-ring inset-ring-white/15 z-40"
+      class="fixed top-0 right-0 min-h-screen px-3 py-2 text-xl text-white bg-p3-yellow text-scale-black transition-all duration-300 ease-snappy hover:bg-p3-indigo rounded-md shadow-md inset-shadow-sm inset-shadow-white/20 ring ring-blue-600 inset-ring inset-ring-white/15 z-40"
     >
       {{ isSidebarOpen ? "🅧" : "←" }}
     </button>
     <aside
-  class="fixed top-0 right-0 h-screen w-2/4 bg-gray-800 text-white
+  class="fixed top-0 right-0 h-screen w-2/4 bg-p3-gray text-white
          transform transition-transform duration-300 z-20 flex flex-col"
   :class="{
     'translate-x-full': !isSidebarOpen,
@@ -14,7 +14,7 @@
   }"
 >
   <!-- "Sticky" header  -->
-  <div class="p-4 text-xl font-bold border-b border-gray-700 shrink-0">
+  <div class="p-4 text-xl font-bold border-b border-secondary shrink-0">
     <slot name="sidebar-header" />
   </div>
 
@@ -27,7 +27,7 @@
 
     <!--  Overlay (when click on the side hidden) -->
     <div
-      class="fixed inset-0 bg-transplant text-neon-indigo bg-opacity-30 z-10"
+      class="fixed inset-0 z-10"
       v-if="isSidebarOpen"
       @click="closeSidebar"
     ></div>

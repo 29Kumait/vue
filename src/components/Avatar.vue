@@ -1,106 +1,79 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { supabase } from '../supabase'
+import { ref, watch } from 'vue'
+import { useAvatar } from '../composables/useAvatar'
 
-interface AvatarProps {
-  path?: string
-  size?: number
-}
-
-const props = defineProps<AvatarProps>()
-
+const props = defineProps({
+  path: { type: String, default: '' },
+  size: { type: Number, default: 5 }
+})
 const emit = defineEmits(['upload', 'update:path'])
 
-const pathRef = computed(() => props.path || '') // fallback to empty string
-const size = computed(() => props.size ?? 5)     // fallback to 5 if not given
+const { uploading, imageUrl, downloadImage, uploadAvatar } = useAvatar()
 
-const uploading = ref(false)
-const src = ref('')
+// Keep track of local file selection
 const files = ref<FileList | null>(null)
 
-// Download image from supabase
-async function downloadImage(filePath: string) {
-  try {
-    const { data, error } = await supabase.storage.from('avatars').download(filePath)
-    if (error) throw error
-    src.value = URL.createObjectURL(data)
-  } catch (err) {
-    const error = err as Error
-    console.error('Error downloading image: ', error.message)
-  }
-}
-
-// Watch for changes in pathRef, re-download image if it changes
+// Watch the incoming path
 watch(
-  () => pathRef.value,
+  () => props.path,
   (newPath) => {
     if (newPath) {
       downloadImage(newPath)
     } else {
-      src.value = ''
+      imageUrl.value = ''
     }
   },
-  { immediate: true } 
+  { immediate: true }
 )
 
-async function uploadAvatar(evt: Event) {
+async function handleFileChange(evt: Event) {
   const inputEl = evt.target as HTMLInputElement
   files.value = inputEl.files
   try {
-    uploading.value = true
-    if (!files.value || files.value.length === 0) {
-      throw new Error('You must select an image to upload.')
+    if (!files.value || !files.value.length) {
+      throw new Error('No file selected')
     }
-
-    const file = files.value[0]
-    const fileExt = file.name.split('.').pop()
-    const filePath = `${Math.random()}.${fileExt}`
-
-    const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file)
-    if (uploadError) throw uploadError
-
-    // Emit the new path back to the parent so it can update
-    emit('update:path', filePath)
+    const newFile = files.value[0]
+    const path = await uploadAvatar(newFile)
+    // Emit new path back to parent
+    emit('update:path', path)
     emit('upload')
   } catch (err) {
-    const error = err as Error
-    alert(error.message)
-  } finally {
-    uploading.value = false
+    alert((err as Error).message)
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4 px-4 py-4 glow-effect">
+  <div class="flex flex-col items-center gap-4 px-4 py-4 ">
     <img
-      v-if="src"
-      :src="src"
+      v-if="imageUrl"
+      :src="imageUrl"
       alt="Avatar"
-      class="avatar image rounded-full shadow-md"
-      :style="{ height: size + 'em', width: size + 'em' }"
+      class="inline-block size-10 rounded-full ring-2 ring-white"
+            :style="{ height: size + 'em', width: size + 'em' }"
     />
     <div
       v-else
       class="avatar no-image gradient-card flex items-center justify-center"
       :style="{ height: size + 'em', width: size + 'em' }"
     >
-      <span class="text-sm">No Image</span>
+      <span class="text-sm">'+ &nbsp; '</span>
     </div>
 
-    <div :style="{ width: size + 'em' }">
-      <label
-        for="single"
-        class="cursor-pointer button primary block px-4 py-2 bg-neon-springgreen text-white font-semibold rounded-md shadow-sm hover:bg-neon-lime focus:outline-none transition-all ease-snappy"
+    <!-- <div :style="{ width: size + 'em' }"> -->
+      <div>
+        <label for="avatarInput"
+        class=" px-4 py-2 cursor-pointer button primary block bg-p3-orange text-white rounded transition-all duration-500 ease-fluid hover:bg-p3-yellow focus:outline-none ease-snappy"
       >
-        {{ uploading ? 'Uploading ...' : 'Upload Image' }}
+        {{ uploading ? 'Uploading ...' : '+ &nbsp; Image' }}
       </label>
       <input
         style="visibility: hidden; position: absolute;"
         type="file"
-        id="single"
+        id="avatarInput"
         accept="image/*"
-        @change="uploadAvatar"
+        @change="handleFileChange"
         :disabled="uploading"
       />
     </div>
