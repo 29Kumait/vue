@@ -31,18 +31,18 @@ function handleSignOut() {
     <Avatar v-model:path="avatarUrl" @upload="handleUpdateProfile" :size="10" />
   </div>
 
-  <div class="max-w-md mx-auto p-6 space-y-7 border border-secondary rounded-md shadow-md bg-p3-pink text-primary">
+  <div class="max-w-md mx-auto p-6 space-y-7 border border-p3-pink rounded-md shadow-md mix-blend-lighten text-primary">
 
     <div class="@container">
       <div class="flex flex-initial justify-between">
         <input v-model="username" required
-          class="p-2 border border-secondary rounded-md focus:outline-none font-bold max-w-48" />
+          class="text-background-light font-semibold p-2 border border-secondary rounded-md focus:outline max-w-48" />
         <!-- Email (Disabled) -->
         <input type="email" :value="userStore.user?.email" disabled
           class="p-2 border border-secondary rounded-md focus:outline-none bg-gray-100 max-w-48" />
       </div>
       <button @click="handleUpdateProfile"
-        class="px-4 py-2 bg-p3-teal text-white rounded shadow hover:bg-p3-yellow transition-all duration-500 ease-fluid  disabled:opacity-50 w-28"
+        class="px-4 py-2 bg-neon-springgreen rounded shadow hover:bg-p3-yellow transition-all duration-500 ease-fluid  disabled:opacity-50 w-28"
         :disabled="loading">{{ loading ? 'Updating...' : 'Update' }}</button>
       <div class="flex justify-end">
         <button @click="handleSignOut"
@@ -50,7 +50,6 @@ function handleSignOut() {
           :disabled="loading">Sign-Out </button>
       </div>
     </div>
-
     <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
   </div>
 </template>
