@@ -1,7 +1,7 @@
 <template>
   <Drawer>
     <template #sidebar-header>
-      <h1 class="text-xl font-bold"> Account </h1>
+      <h1 class="text-center text-2xl tracking-tight font-bold px-6 py-12 lg:px-8"> Account </h1>
     </template>
 
     <template #sidebar-content>
@@ -13,14 +13,6 @@
         <div v-else>
           <div class="@container">
 
-            <div class="flex justify-around mb-4">
-              <button @click="isSignupMode = false" :class="{ 'font-bold': !isSignupMode }">
-                Login
-              </button>
-              <button @click="isSignupMode = true" :class="{ 'font-bold': isSignupMode }">
-                Sign Up
-              </button>
-            </div>
 
             <div v-if="isSignupMode">
               <Signup />
@@ -30,6 +22,15 @@
             </div>
 
           </div>
+
+          <div class="flex justify-around mb-4">
+              <button @click="isSignupMode = false" :class="{ 'font-bold': !isSignupMode }">
+                Login
+              </button>
+              <button @click="isSignupMode = true" :class="{ 'font-bold': isSignupMode }">
+                Sign Up
+              </button>
+            </div>
         </div>
     </template>
   </Drawer>

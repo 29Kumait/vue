@@ -14,7 +14,7 @@
   }"
 >
   <!-- "Sticky" header  -->
-  <div class="p-4 text-xl font-bold border-b border-secondary shrink-0">
+  <div class="mt-10 shrink-0">
     <slot name="sidebar-header" />
   </div>
 
