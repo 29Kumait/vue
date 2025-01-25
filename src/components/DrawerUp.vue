@@ -3,12 +3,16 @@
     <template #sidebar-header>
       <h1 class="text-xl font-bold"> Account </h1>
     </template>
+
     <template #sidebar-content>
+    
         <div v-if="isAuthenticated">
           <Account />
         </div>
+
         <div v-else>
           <div class="@container">
+
             <div class="flex justify-around mb-4">
               <button @click="isSignupMode = false" :class="{ 'font-bold': !isSignupMode }">
                 Login
@@ -17,12 +21,14 @@
                 Sign Up
               </button>
             </div>
+
             <div v-if="isSignupMode">
               <Signup />
             </div>
             <div v-else>
               <Auth />
             </div>
+
           </div>
         </div>
     </template>
