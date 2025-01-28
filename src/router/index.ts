@@ -2,46 +2,38 @@ import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import { useUserStore } from "../stores/useUserStore";
 
-import First from "../views/First.vue";
-import Second from "../views/Second.vue";
-import Auth from "../components/Auth.vue";
-import Signup from "../components/Signup.vue";
-import Account from "../components/Account.vue";
-import Avatar from "../components/Avatar.vue";
-
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "First",
-    component: First,
+    component: () => import("../views/First.vue"),
   },
   {
     path: "/auth",
     name: "Auth",
-    component: Auth,
+    component: () => import("../components/Auth.vue"),
   },
   {
     path: "/second",
     name: "Second",
-    component: Second,
+    component: () => import("../views/Second.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/avatar",
     name: "Avatar",
-    component: Avatar,
+    component: () => import("../components/Avatar.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/signup",
     name: "Signup",
-    component: Signup,
+    component: () => import("../components/Signup.vue"),
   },
-
   {
     path: "/account",
     name: "Account",
-    component: Account,
+    component: () => import("../components/Account.vue"),
     meta: { requiresAuth: true },
   },
 ];
