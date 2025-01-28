@@ -1,51 +1,85 @@
-import { defineStore } from 'pinia'
-import type { User } from '@supabase/supabase-js'
-import { ref, computed } from 'vue'
-import { supabase } from '../supabase'
+import { defineStore } from 'pinia';
+import type { User } from '@supabase/supabase-js';
+import { ref, computed } from 'vue';
+import { supabase } from '../supabase';
+import { useNotificationStore } from './useNotificationStore';
 
 export const useUserStore = defineStore('user', () => {
-    // --- State ---
-    const user = ref<User | null>(null)
+  // State
+  const user = ref<User | null>(null);
+  const isLoading = ref(false);
 
-    // --- Getters ---
-    // isAuthenticated is a computed value
-    const isAuthenticated = computed(() => !!user.value)
+  // Getters
+  const isAuthenticated = computed(() => !!user.value);
 
-    // --- Actions ---
-    function initAuthPersistence() {
-        supabase.auth.onAuthStateChange((_, session) => {
-            user.value = session?.user || null
-        })
+  // Actions
+  async function fetchUserSession() {
+    isLoading.value = true;
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      user.value = data.session?.user || null;
+    } catch (error) {
+      handleAuthError(error, 'Failed to fetch user session');
+    } finally {
+      isLoading.value = false;
     }
+  }
 
-    async function fetchUserSession() {
-        const { data } = await supabase.auth.getSession()
-        user.value = data.session?.user || null
+  async function signIn(email: string, password: string) {
+    isLoading.value = true;
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      user.value = await fetchUserSession(); // Refresh the user state after login
+      useNotificationStore().addNotification('success', 'Signed in successfully');
+    } catch (error) {
+      handleAuthError(error, 'Failed to sign in');
+    } finally {
+      isLoading.value = false;
     }
+  }
 
-    async function signIn(email: string, password: string) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) throw error
+  async function signUp(email: string, password: string) {
+    isLoading.value = true;
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      useNotificationStore().addNotification('success', 'Account created successfully');
+    } catch (error) {
+      handleAuthError(error, 'Failed to sign up');
+    } finally {
+      isLoading.value = false;
     }
+  }
 
-    async function signUp(email: string, password: string) {
-        const { error } = await supabase.auth.signUp({ email, password })
-        if (error) throw error
+  async function signOut() {
+    isLoading.value = true;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      user.value = null;
+      useNotificationStore().addNotification('success', 'Signed out successfully');
+    } catch (error) {
+      handleAuthError(error, 'Failed to sign out');
+    } finally {
+      isLoading.value = false;
     }
+  }
 
-    async function signOut() {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
-    }
+  function handleAuthError(error: unknown, fallbackMessage: string) {
+    const message = (error as Error)?.message || fallbackMessage;
+    console.error(message);
+    useNotificationStore().addNotification('error', message);
+  }
 
-    // Return everything we want to expose from the store
-    return {
-        user,
-        isAuthenticated,
-        initAuthPersistence,
-        fetchUserSession,
-        signIn,
-        signUp,
-        signOut,
-    }
-})
+  return {
+    user,
+    isAuthenticated,
+    isLoading,
+    fetchUserSession,
+    signIn,
+    signUp,
+    signOut,
+  };
+});
