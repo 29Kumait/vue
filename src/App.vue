@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import DrawerUp from './components/DrawerUp.vue'
-import Footer from './components/Footer.vue'
-import Notifications from './components/Notifications.vue'
-import { onMounted } from 'vue'
-import { useUserStore } from './stores/useUserStore'
+import { defineAsyncComponent, onMounted } from 'vue';
+import Footer from './components/Footer.vue';
+import Notifications from './components/Notifications.vue';
+import { useUserStore } from './stores/useUserStore';
 
-const userStore = useUserStore()
+const DrawerUp = defineAsyncComponent(() => import('./components/DrawerUp.vue'));
+
+const userStore = useUserStore();
 
 onMounted(() => {
-  userStore.initAuthPersistence()
-})
+  userStore.initAuthPersistence();
+});
 </script>
 
 <template>
