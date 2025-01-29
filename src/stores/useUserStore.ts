@@ -13,11 +13,10 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => !!user.value);
 
   // Actions
-  function initAuthPersistence() {
-    supabase.auth.onAuthStateChange((_, session) => {
-      user.value = session?.user || null;
-    });
-  }
+    user.value = session?.user ? {
+    id: session.user.id,
+    email: session.user.email
+  } : null
 
   async function fetchUserSession() {
     isLoading.value = true;
