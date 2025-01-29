@@ -1,43 +1,36 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 interface Notification {
-    id: number;
-    type: "success" | "error" | "info" | "warning";
-    message: string;
-    duration?: number;
+  id: number;
+  type: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+  duration?: number;
 }
 
-export const useNotificationStore = defineStore("notification", () => {
-    // State
-    const notifications = ref<Notification[]>([]);
+export const useNotificationStore = defineStore('notification', () => {
+  // State
+  const notifications = ref<Notification[]>([]);
 
-    //Simple auto-increment ID generator:
-    let nextId = 1;
+  // ID generator
+  let nextId = 1;
 
-    // Actions
-    function addNotification(
-        type: Notification["type"],
-        message: string,
-        duration?: number
-    ) {
-        const id = nextId++;
-        notifications.value.push({ id, type, message, duration });
-
-        if (duration && duration > 0) {
-            setTimeout(() => {
-                removeNotification(id);
-            }, duration);
-        }
+  // Actions
+  function addNotification(type: Notification['type'], message: string, duration = 3000) {
+    const id = nextId++;
+    notifications.value.push({ id, type, message, duration });
+    if (duration > 0) {
+      setTimeout(() => removeNotification(id), duration);
     }
+  }
 
-    function removeNotification(id: number) {
-        notifications.value = notifications.value.filter((n) => n.id !== id);
-    }
+  function removeNotification(id: number) {
+    notifications.value = notifications.value.filter(notification => notification.id !== id);
+  }
 
-    return {
-        notifications,
-        addNotification,
-        removeNotification,
-    };
+  return {
+    notifications,
+    addNotification,
+    removeNotification,
+  };
 });
