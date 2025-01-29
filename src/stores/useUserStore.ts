@@ -13,22 +13,14 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => !!user.value);
 
   // Actions
-  function initAuthPersistence() {
-    supabase.auth.onAuthStateChange((_, session) => {
-      user.value = session?.user || null;
-    });
-  }
-
   async function fetchUserSession() {
     isLoading.value = true;
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
       user.value = data.session?.user || null;
-      return user.value;
     } catch (error) {
       handleAuthError(error, 'Failed to fetch user session');
-      return null;
     } finally {
       isLoading.value = false;
     }
@@ -40,7 +32,7 @@ export const useUserStore = defineStore('user', () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       await fetchUserSession();
-useNotificationStore().addNotification('success', 'Signed in successfully');
+      useNotificationStore().addNotification('success', 'Signed in successfully');
     } catch (error) {
       handleAuthError(error, 'Failed to sign in');
     } finally {
@@ -66,7 +58,8 @@ useNotificationStore().addNotification('success', 'Signed in successfully');
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      user.value = null; useNotificationStore().addNotification('success', 'Signed out successfully');
+      user.value = null;
+      useNotificationStore().addNotification('success', 'Signed out successfully');
     } catch (error) {
       handleAuthError(error, 'Failed to sign out');
     } finally {
@@ -84,7 +77,6 @@ useNotificationStore().addNotification('success', 'Signed in successfully');
     user,
     isAuthenticated,
     isLoading,
-    initAuthPersistence,
     fetchUserSession,
     signIn,
     signUp,
