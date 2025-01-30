@@ -20,7 +20,6 @@
             <div v-else>
               <Auth />
             </div>
-
           </div>
 
           <div class="flex justify-around mb-4">

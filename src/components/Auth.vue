@@ -13,10 +13,12 @@ function handleSignIn() {
 
 <template>
   <div class="max-w-md mx-auto px-6 py-12">
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Email</label>
-      <input type="email" v-model="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-    </div>
+      <label class="block mb-4 text-sm font-medium text-gray-700">
+        <p class=" after:ml-0.5 after:text-p3-red after:content-['*'] ">Email</p>
+      <input type="email" v-model="email" class="peer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+      <p class="invisible peer-invalid:visible">invalid email address.</p>
+    </label>
+
     <div class="mb-4">
       <input placeholder="password" v-model="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-transparent" type="password"/>
     </div>

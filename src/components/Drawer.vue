@@ -6,8 +6,8 @@
       {{ isSidebarOpen ? "🅧" : "←" }}
     </button>
     <aside
-  class="fixed top-0 right-0 h-screen w-2/4 bg-p3-gray text-white
-         transform transition-transform duration-300 z-20 flex flex-col"
+  class="fixed top-0 right-10 h-screen w-2/4 bg-p3-gray text-white
+         transform transition-transform duration-300 z-20 flex flex-col  border-l-p3-yellow border-1"
   :class="{
     'translate-x-full': !isSidebarOpen,
     'translate-x-0': isSidebarOpen,
@@ -27,10 +27,11 @@
 
     <!--  Overlay (when click on the side hidden) -->
     <div
-      class="fixed inset-0 z-10"
+      class="fixed inset-0 z-10 backdrop-blur-2xl grayscale"
       v-if="isSidebarOpen"
       @click="closeSidebar"
-    ></div>
+    >
+  </div>
 
     <!--  Main Content -->
     <div class="flex-grow mr-0 md:mr-64">
