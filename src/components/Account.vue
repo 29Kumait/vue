@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { onMounted } from 'vue'
 import Avatar from './Avatar.vue'
 import { useUserStore } from '../stores/useUserStore'
@@ -15,15 +16,19 @@ const formatDate = (date: string) => {
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
 };
 
+const formattedLastSignIn = computed(() => {
+  return userStore.user?.last_sign_in_at ? formatDate(userStore.user.last_sign_in_at) : '';
+});
 
 onMounted(() => {
   getProfile(userStore.user)
 })
 
+// instead of  {{ userStore.user?.last_sign_in_at ? formatDate(userStore.user.last_sign_in_at) : '' }}
+// we can use computed property to format the date
 function handleUpdateProfile() {
   updateProfile(userStore.user, username.value, avatarUrl.value)
 }
-
 
 const { signOut } = useAuth()
 
@@ -38,15 +43,15 @@ function handleSignOut() {
     <div class="flex justify-between items-baseline">
       <input type="email" :value="userStore.user?.email" disabled
         class="p-2 border border-secondary rounded-md bg-p3-accent text-p3-cyan max-w-48" />
-      <p class="text-s">Signed: {{ formatDate(userStore.user.last_sign_in_at) }}</p>
+      <p class="text-s">Signed: {{ formattedLastSignIn }} </p>
     </div>
     <div class="max-w-md mx-auto p-3 shadow-md ">
 
       <Avatar v-model:path="avatarUrl" @upload="handleUpdateProfile" :size="10" />
       <div class="flex flex-auto justify-end items-baseline text-sky-900">
-        <span
-          class="relative inline-block before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-p3-yellow">
-          <span class="relative">Name: </span> </span>
+        <span class="relative inline-block">
+          <span class="relative bg-p3-yellow -skew-y-3 inline-block">Name: </span>
+        </span>
         <label class="block justify-around">
           <input v-model="username" required class="peer p-2  focus:outline-none font-bold max-w-48" />
           <button @click="handleUpdateProfile"
@@ -64,6 +69,5 @@ function handleSignOut() {
       :disabled="loading">Sign-Out </button>
     <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
   </div>
-
 
 </template>
