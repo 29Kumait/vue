@@ -1,5 +1,7 @@
+// src/router/index.ts
+
 import { createRouter, createWebHistory } from "vue-router";
-import type { RouteRecordRaw } from "vue-router";
+import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "../stores/useUserStore";
 
 const routes: RouteRecordRaw[] = [
@@ -43,19 +45,23 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (
+  to: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
+  next: NavigationGuardNext
+) => {
   const userStore = useUserStore();
 
   if (!userStore.user) {
     await userStore.fetchUserSession();
   }
 
-  // Force user to sign in page if they're not logged in.
+  // Force user to sign in if not authenticated.
   if (to.meta.requiresAuth && !userStore.isAuthenticated) {
     return next({ name: "Auth" });
   }
 
-  // If already logged in, block them from going to '/auth' page (optional)
+  // If already logged in, block access to the '/auth' page.
   if (to.name === "Auth" && userStore.isAuthenticated) {
     return next({ name: "Second" });
   }

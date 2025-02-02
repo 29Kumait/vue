@@ -3,20 +3,23 @@ import { ref, watch } from 'vue'
 import { useAvatar } from '../composables/useAvatar'
 import { useNotificationStore } from '../stores/useNotificationStore'
 
-const notificationStore = useNotificationStore()
-
 const props = defineProps({
   path: { type: String, default: '' },
-  size: { type: Number, default: 5 }
+  size: { type: Number, default: 5 },
 })
-const emit = defineEmits(['upload', 'update:path'])
 
+const emit = defineEmits<{
+  (e: 'upload'): void;
+  (e: 'update:path', value: string): void;
+}>()
+
+const notificationStore = useNotificationStore()
 const { uploading, imageUrl, downloadImage, uploadAvatar } = useAvatar()
 
 // Keep track of local file selection
 const files = ref<FileList | null>(null)
 
-// Watch the incoming path
+// Watch the incoming prop "path"
 watch(
   () => props.path,
   (newPath) => {
@@ -54,20 +57,20 @@ async function handleFileChange(evt: Event) {
       :src="imageUrl"
       alt="Avatar"
       class="inline-block size-10 rounded-full ring-2 ring-white"
-            :style="{ height: size + 'em', width: size + 'em' }"
+      :style="{ height: props.size + 'em', width: props.size + 'em' }"
     />
     <div
       v-else
       class="avatar no-image gradient-card flex items-center justify-center"
-      :style="{ height: size + 'em', width: size + 'em' }"
+      :style="{ height: props.size + 'em', width: props.size + 'em' }"
     >
-      <span class="text-sm">'+ &nbsp; '</span>
+      <span class="text-sm">+ &nbsp;</span>
     </div>
 
-    <!-- <div :style="{ width: size + 'em' }"> -->
-      <div>
-        <label for="avatarInput"
-        class=" px-4 py-2 cursor-pointer button primary block bg-p3-orange text-white rounded transition-all duration-500 ease-fluid hover:bg-p3-yellow focus:outline-none ease-snappy"
+    <div>
+      <label
+        for="avatarInput"
+        class="px-4 py-2 cursor-pointer button primary block bg-p3-orange text-white rounded transition-all duration-500 ease-fluid hover:bg-p3-yellow focus:outline-none ease-snappy"
       >
         {{ uploading ? 'Uploading ...' : '+ &nbsp; Image' }}
       </label>
