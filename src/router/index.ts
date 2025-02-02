@@ -1,12 +1,7 @@
 // src/router/index.ts
 
-import {
-  createRouter,
-  createWebHistory,
-  NavigationGuardNext,
-  RouteLocationNormalized,
-} from "vue-router";
-import type { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
+import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "../stores/useUserStore";
 
 const routes: RouteRecordRaw[] = [
@@ -50,31 +45,28 @@ const router = createRouter({
   routes,
 });
 
-// Explicitly type the guard parameters.
-router.beforeEach(
-  async (
-    to: RouteLocationNormalized,
-    _from: RouteLocationNormalized,
-    next: NavigationGuardNext
-  ) => {
-    const userStore = useUserStore();
+router.beforeEach(async (
+  to: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
+  next: NavigationGuardNext
+) => {
+  const userStore = useUserStore();
 
-    if (!userStore.user) {
-      await userStore.fetchUserSession();
-    }
-
-    // Force user to sign in if not authenticated.
-    if (to.meta.requiresAuth && !userStore.isAuthenticated) {
-      return next({ name: "Auth" });
-    }
-
-    // If already logged in, block access to the '/auth' page.
-    if (to.name === "Auth" && userStore.isAuthenticated) {
-      return next({ name: "Second" });
-    }
-
-    next();
+  if (!userStore.user) {
+    await userStore.fetchUserSession();
   }
-);
+
+  // Force user to sign in if not authenticated.
+  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    return next({ name: "Auth" });
+  }
+
+  // If already logged in, block access to the '/auth' page.
+  if (to.name === "Auth" && userStore.isAuthenticated) {
+    return next({ name: "Second" });
+  }
+
+  next();
+});
 
 export default router;
