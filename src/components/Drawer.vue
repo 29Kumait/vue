@@ -27,7 +27,7 @@
 
   <!-- Overlay to close sidebar when clicked -->
   <div
-    class="fixed inset-0 z-10 backdrop-blur-2xl grayscale"
+    class="fixed inset-0 z-10 backdrop-blur-2xl grayscale transition-opacity duration-300 ease-snappy"
     v-if="isSidebarOpen"
     @click="closeSidebar"
   ></div>
