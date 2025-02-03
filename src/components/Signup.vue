@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
-import { debounce } from 'lodash-es'
 
 const email = ref<string>('')
 const password = ref<string>('')
 
 const { loading, errorMsg, signUp } = useAuth()
 
-const handleSignUp = debounce(() => {
+function handleSignUp(): void {
   signUp(email.value, password.value)
-}, 300)
+}
 </script>
 
 <template>
