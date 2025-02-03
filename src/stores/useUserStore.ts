@@ -1,5 +1,3 @@
-// src/stores/useUserStore.ts
-
 import { defineStore } from 'pinia'
 import type { User } from '@supabase/supabase-js'
 import { ref, computed } from 'vue'
