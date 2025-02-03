@@ -25,6 +25,7 @@ async function createServer() {
         <html>
           <head>
             <title>Vue SSR App</title>
+            <link rel="stylesheet" href="/src/style.css">
           </head>
           <body>
             <div id="app">${appHtml}</div>

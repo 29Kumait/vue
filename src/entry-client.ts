@@ -1,4 +1,5 @@
 import { createApp } from './entry-server'
+import './style.css'
 
 const { app, router } = createApp()
 
