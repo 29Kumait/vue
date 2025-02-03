@@ -2,7 +2,6 @@
 import { ref, watch } from 'vue'
 import { useAvatar } from '../composables/useAvatar'
 import { useNotificationStore } from '../stores/useNotificationStore'
-import { debounce } from 'lodash-es'
 
 const props = defineProps({
   path: { type: String, default: '' },
@@ -52,8 +51,6 @@ async function handleFileChange(evt: Event) {
     notificationStore.addNotification('error', (err as Error).message)
   }
 }
-
-const debouncedHandleFileChange = debounce(handleFileChange, 300)
 </script>
 
 <template>
@@ -85,7 +82,7 @@ const debouncedHandleFileChange = debounce(handleFileChange, 300)
         type="file"
         id="avatarInput"
         accept="image/*"
-        @change="debouncedHandleFileChange"
+        @change="handleFileChange"
         :disabled="uploading"
       />
     </div>
