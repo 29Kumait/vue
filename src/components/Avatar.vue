@@ -40,10 +40,13 @@ async function handleFileChange(evt: Event) {
       throw new Error('No file selected')
     }
     const newFile = files.value[0]
-    const path = await uploadAvatar(newFile)
-    // Emit new path back to parent
-    emit('update:path', path)
-    emit('upload')
+    const worker = new Worker(new URL('../workers/fileWorker.ts', import.meta.url))
+    worker.postMessage(newFile)
+    worker.onmessage = async (e) => {
+      const path = await uploadAvatar(e.data)
+      emit('update:path', path)
+      emit('upload')
+    }
   } catch (err) {
     notificationStore.addNotification('error', (err as Error).message)
   }

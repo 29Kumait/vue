@@ -4,6 +4,7 @@ import Avatar from './Avatar.vue'
 import { useUserStore } from '../stores/useUserStore'
 import { useAuth } from '../composables/useAuth'
 import { useProfile } from '../composables/useProfile'
+import { debounce } from 'lodash-es'
 
 // Get profile-related reactive state and methods
 const { loading, errorMsg, username, avatarUrl, getProfile, updateProfile } = useProfile()
@@ -31,15 +32,15 @@ onMounted(() => {
 })
 
 // Called when the user updates their profile
-function handleUpdateProfile() {
+const handleUpdateProfile = debounce(() => {
   updateProfile(userStore.user, username.value, avatarUrl.value)
-}
+}, 300)
 
 const { signOut } = useAuth()
 
-function handleSignOut() {
+const handleSignOut = debounce(() => {
   signOut()
-}
+}, 300)
 </script>
 
 <template>

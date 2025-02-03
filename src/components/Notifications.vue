@@ -20,12 +20,13 @@
 
 <script setup lang="ts">
 import { useNotificationStore } from '../stores/useNotificationStore'
+import { debounce } from 'lodash-es'
 
 const notificationStore = useNotificationStore()
 
-function close(id: number): void {
+const close = debounce((id: number): void => {
   notificationStore.removeNotification(id)
-}
+}, 300)
 
 function backgroundClass(type: string): string {
   switch (type) {
