@@ -24,7 +24,7 @@ onMounted(async () => {
 })
 
 // DRY fetch function
-async function fetchProfileIfLoggedIn() {
+async function fetchProfileIfLoggedIn(): Promise<void> {
   if (!userStore.user) return
   loading.value = true
   try {
@@ -38,7 +38,7 @@ async function fetchProfileIfLoggedIn() {
 }
 
 // Format a date
-function formatDate(date: string) {
+function formatDate(date: string): string {
   if (!date) return ''
   const d = new Date(date)
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`
@@ -52,13 +52,13 @@ const formattedLastSignIn = computed(() => {
 })
 
 // Update profile
-function handleUpdateProfile() {
+function handleUpdateProfile(): void {
   updateProfile(userStore.user, username.value, avatarUrl.value)
 }
 
 // Sign out
 const { signOut } = useAuth()
-function handleSignOut() {
+function handleSignOut(): void {
   signOut()
 }
 </script>

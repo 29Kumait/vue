@@ -1,5 +1,3 @@
-// src/stores/useNotificationStore.ts
-
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -11,35 +9,30 @@ interface Notification {
 }
 
 export const useNotificationStore = defineStore('notification', () => {
-  // State
   const notifications = ref<Notification[]>([])
 
-  // ID generator
   let nextId = 1
 
-  // Actions
   function addNotification(
     type: Notification['type'],
     message: string,
     duration = 3000
-  ) {
+  ): void {
     const id = nextId++
     notifications.value.push({ id, type, message, duration })
 
-    // Auto-remove notification if duration is set
     if (duration > 0) {
       setTimeout(() => removeNotification(id), duration)
     }
   }
 
-  function removeNotification(id: number) {
+  function removeNotification(id: number): void {
     notifications.value = notifications.value.filter(
       (notification) => notification.id !== id
     )
   }
 
-  // Optionally clear all notifications at once
-  function clearNotifications() {
+  function clearNotifications(): void {
     notifications.value = []
   }
 

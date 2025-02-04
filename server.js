@@ -8,13 +8,17 @@ import rateLimit from "express-rate-limit";
 import he from "he";
 import compression from "compression";
 import helmet from "helmet";
+import type { Express, Request, Response, NextFunction } from "express";
+import type { ViteDevServer } from "vite";
+import type { RateLimitRequestHandler } from "express-rate-limit";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function startServer() {
-  const app = express();
+  const app: Express = express();
 
   // set up rate limiter: maximum of 100 requests per 15 minutes
-  const limiter = rateLimit({
+  const limiter: RateLimitRequestHandler = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // max 100 requests per windowMs
   });
@@ -29,7 +33,7 @@ async function startServer() {
   app.use(helmet());
 
   // 1) Create Vite in middleware mode
-  const vite = await createViteServer({
+  const vite: ViteDevServer = await createViteServer({
     server: { middlewareMode: "ssr" },
     appType: "custom", // avoid Vite spamming console with warnings
   });
@@ -38,7 +42,7 @@ async function startServer() {
   app.use(vite.middlewares);
 
   // 3) Handle all routes
-  app.use("*", async (req, res, next) => {
+  app.use("*", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const url = req.originalUrl;
 
@@ -83,7 +87,7 @@ async function startServer() {
     } catch (err) {
       vite.ssrFixStacktrace(err);
       console.error(err);
-      res.status(500).end(he.escape(err.message));
+      res.status(500).end(he.escape((err as Error).message));
     }
   });
 
@@ -98,7 +102,7 @@ async function startServer() {
   }));
 
   // error handling middleware
-  app.use((err, req, res, next) => {
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
   });

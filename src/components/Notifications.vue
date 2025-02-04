@@ -27,7 +27,7 @@ function close(id: number): void {
   notificationStore.removeNotification(id)
 }
 
-function backgroundClass(type: string): string {
+function backgroundClass(type: 'success' | 'error' | 'info' | 'warning'): string {
   switch (type) {
     case 'success':
       return 'bg-green-500 text-white'
