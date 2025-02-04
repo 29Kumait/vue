@@ -3,7 +3,12 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import { createRouter } from './router/index'
 
+let isAppCreated = false; // P38e0
+
 export function createApp(isServer = true) {
+    if (isAppCreated) return; // P38e0
+    isAppCreated = true; // P38e0
+
     // 1) Create app in SSR mode
     const app = createSSRApp(App)
 

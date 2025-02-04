@@ -1,6 +1,8 @@
 import { createApp } from './entry-server'
 import './style.css'
 
+let isHydrated = false; // P5fd5
+
 // 1) Create the app in "client mode"
 const { app, router, pinia } = createApp(false)
 
@@ -8,6 +10,9 @@ const { app, router, pinia } = createApp(false)
 if (window.__PINIA) pinia.state.value = JSON.parse(window.__PINIA)
 
 router.isReady().then(() => {
-    // 3) Hydrate the SSR-generated HTML
-    app.mount('#app', true)
+    if (!isHydrated) { // P5fd5
+        // 3) Hydrate the SSR-generated HTML
+        app.mount('#app', true)
+        isHydrated = true; // P5fd5
+    }
 })
