@@ -42,6 +42,6 @@ import ProductGallery from '../components/ProductGallery.vue';
 
 <style scoped>
 .futuristic-page {
-  @apply bg-gray-100 min-h-screen;
+  @apply bg-p3-gray min-h-screen;
 }
 </style>
