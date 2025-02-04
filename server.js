@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import devalue from "devalue"; // safely serialize JS objects to strings
 import rateLimit from "express-rate-limit";
-
+import he from "he";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function startServer() {
@@ -75,7 +75,7 @@ async function startServer() {
     } catch (err) {
       vite.ssrFixStacktrace(err);
       console.error(err);
-      res.status(500).end(err.message);
+      res.status(500).end(he.escape(err.message));
     }
   });
 
