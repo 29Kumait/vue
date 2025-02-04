@@ -44,6 +44,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/Account.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/futuristic',
+    name: 'FuturisticPage',
+    component: () => import('../views/FuturisticPage.vue'),
+  },
 ]
 
 // 2) Create a function that returns a new router each time

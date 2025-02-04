@@ -3,7 +3,6 @@
     <input
       type="text"
       v-model="searchQuery"
-      @input="fetchProducts"
       placeholder="Search products..."
       class="search-input"
     />
@@ -14,7 +13,6 @@
         :title="product.title"
         :description="product.description"
         :image="product.image"
-        class="hover:shadow-lg transition-shadow duration-300"
       />
     </div>
   </div>
@@ -37,12 +35,6 @@ const filteredProducts = computed(() => {
     product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
-
-function fetchProducts() {
-  // Simulate fetching products based on search query
-  // In a real application, you would make an API call here
-  console.log('Fetching products for query:', searchQuery.value);
-}
 </script>
 
 <style scoped>

@@ -1,11 +1,7 @@
 <template>
-  <div
-    :class="[
-      'shape-container transition-transform duration-300 ease-in-out transform hover:scale-105',
-      shapeClass
-    ]"
-    :style="{ backgroundColor: color }"
-  ></div>
+  <div :class="shapeClasses" :style="{ backgroundColor: color }">
+    <p>{{ type }}</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -22,22 +18,21 @@ const props = defineProps({
   },
 });
 
-const shapeClass = computed(() => {
-  switch (props.type) {
-    case 'circle':
-      return 'rounded-full w-16 h-16';
-    case 'square':
-      return 'w-16 h-16';
-    case 'rectangle':
-      return 'w-32 h-16';
-    default:
-      return '';
-  }
-});
+const shapeClasses = computed(() => [
+  'p-4',
+  'rounded-lg',
+  'shadow-md',
+  'transition-transform',
+  'duration-300',
+  'ease-in-out',
+  'transform',
+  'hover:scale-105',
+  'responsive-shape',
+]);
 </script>
 
 <style scoped>
-.shape-container {
-  @apply bg-white shadow-md overflow-hidden;
+.responsive-shape {
+  @apply w-full md:w-1/2 lg:w-1/3;
 }
 </style>
