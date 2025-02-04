@@ -32,7 +32,7 @@ watch(
   { immediate: true }
 )
 
-async function handleFileChange(evt: Event) {
+async function handleFileChange(evt: Event): Promise<void> {
   const inputEl = evt.target as HTMLInputElement
   files.value = inputEl.files
   try {

@@ -3,6 +3,9 @@ import {
   createMemoryHistory,
   createWebHistory,
   type RouteRecordRaw,
+  type Router,
+  type NavigationGuardNext,
+  type RouteLocationNormalized,
 } from 'vue-router'
 import { useUserStore } from '../stores/useUserStore' // adjust the path if needed
 
@@ -45,8 +48,8 @@ const routes: RouteRecordRaw[] = [
 
 // 2) Create a function that returns a new router each time
 //    By default, use `import.meta.env.SSR` to detect server vs. client.
-export function createRouter(isServer = import.meta.env.SSR) {
-  const router = _createRouter({
+export function createRouter(isServer = import.meta.env.SSR): Router {
+  const router: Router = _createRouter({
     history: isServer
       ? createMemoryHistory()        // SSR mode
       : createWebHistory(),          // Client mode
@@ -54,7 +57,7 @@ export function createRouter(isServer = import.meta.env.SSR) {
   })
 
   // 3) Add your navigation guards here:
-  router.beforeEach(async (to, _from, next) => {
+  router.beforeEach(async (to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
     const userStore = useUserStore()
 
     // Attempt session fetch if user not yet loaded:

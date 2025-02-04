@@ -1,5 +1,3 @@
-// src/composables/useAuth.ts
-
 import { ref, type Ref } from 'vue'
 import { supabase } from '../supabase'
 import { useRouter } from 'vue-router'

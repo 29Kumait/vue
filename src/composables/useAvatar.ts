@@ -1,5 +1,3 @@
-// src/composables/useAvatar.ts
-
 import { ref, type Ref } from 'vue';
 import { supabase } from '../supabase';
 import { useNotificationStore } from '../stores/useNotificationStore';

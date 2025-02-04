@@ -1,41 +1,25 @@
-// src/stores/useUserStore.ts
-
 import { defineStore } from 'pinia'
 import type { User } from '@supabase/supabase-js'
 import { ref, computed } from 'vue'
 import { supabase } from '../supabase'
 import { useNotificationStore } from './useNotificationStore'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 export const useUserStore = defineStore('user', () => {
-  // ---------------------------------------
-  // State
-  // ---------------------------------------
   const user = ref<User | null>(null)
-  const isLoading = ref(false)
+  const isLoading = ref<boolean>(false)
 
-  // ---------------------------------------
-  // Getters
-  // ---------------------------------------
   const isAuthenticated = computed(() => !!user.value)
 
-  // ---------------------------------------
-  // Single instance of notification store
-  // ---------------------------------------
   const notificationStore = useNotificationStore()
 
-  // ---------------------------------------
-  // Actions
-  // ---------------------------------------
-
-  // Listen to auth changes from Supabase
-  function initAuthPersistence() {
-    supabase.auth.onAuthStateChange((_, session) => {
+  function initAuthPersistence(): void {
+    supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       user.value = session?.user || null
     })
   }
 
-  // Retrieve current user's session from Supabase
-  async function fetchUserSession() {
+  async function fetchUserSession(): Promise<User | null> {
     isLoading.value = true
     try {
       const { data, error } = await supabase.auth.getSession()
@@ -50,8 +34,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // Sign user in
-  async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string): Promise<void> {
     isLoading.value = true
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -66,8 +49,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // Register a new user
-  async function signUp(email: string, password: string) {
+  async function signUp(email: string, password: string): Promise<void> {
     isLoading.value = true
     try {
       const { error } = await supabase.auth.signUp({ email, password })
@@ -81,8 +63,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // Log user out
-  async function signOut() {
+  async function signOut(): Promise<void> {
     isLoading.value = true
     try {
       const { error } = await supabase.auth.signOut()
@@ -97,11 +78,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // ---------------------------------------
-  // Helper: Centralized error handling
-  // ---------------------------------------
-
-  function handleAuthError(error: unknown, fallbackMessage: string) {
+  function handleAuthError(error: unknown, fallbackMessage: string): void {
     const message = (error as Error)?.message || fallbackMessage
     console.error(message)
     notificationStore.addNotification('error', message)
