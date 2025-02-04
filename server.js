@@ -4,11 +4,21 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import devalue from "devalue"; // safely serialize JS objects to strings
+import rateLimit from "express-rate-limit";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function startServer() {
   const app = express();
+
+  // set up rate limiter: maximum of 100 requests per 15 minutes
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per windowMs
+  });
+
+  // apply rate limiter to all requests
+  app.use(limiter);
 
   // 1) Create Vite in middleware mode
   const vite = await createViteServer({
