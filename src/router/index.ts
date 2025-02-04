@@ -75,6 +75,10 @@ export function createRouter(isServer = import.meta.env.SSR) {
     next()
   })
 
+  // Error handling middleware
+  router.onError((error) => {
+    console.error('Router error:', error)
+  })
+
   return router
 }
-

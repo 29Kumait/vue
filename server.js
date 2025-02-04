@@ -6,6 +6,8 @@ import { createServer as createViteServer } from "vite";
 import devalue from "devalue"; // safely serialize JS objects to strings
 import rateLimit from "express-rate-limit";
 import he from "he";
+import compression from "compression";
+import helmet from "helmet";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function startServer() {
@@ -20,6 +22,12 @@ async function startServer() {
   // apply rate limiter to all requests
   app.use(limiter);
 
+  // apply compression middleware
+  app.use(compression());
+
+  // apply security middleware
+  app.use(helmet());
+
   // 1) Create Vite in middleware mode
   const vite = await createViteServer({
     server: { middlewareMode: "ssr" },
@@ -30,7 +38,7 @@ async function startServer() {
   app.use(vite.middlewares);
 
   // 3) Handle all routes
-  app.use("*", async (req, res) => {
+  app.use("*", async (req, res, next) => {
     try {
       const url = req.originalUrl;
 
@@ -77,6 +85,22 @@ async function startServer() {
       console.error(err);
       res.status(500).end(he.escape(err.message));
     }
+  });
+
+  // apply cache-control header to static assets
+  app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: '1d',
+    setHeaders: (res, path) => {
+      if (path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    }
+  }));
+
+  // error handling middleware
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
   });
 
   // 4) Start server
