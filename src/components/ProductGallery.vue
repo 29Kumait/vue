@@ -1,10 +1,10 @@
 <template>
-  <div class="product-gallery">
+  <div>
     <input
       type="text"
       v-model="searchQuery"
       placeholder="Search products..."
-      class="search-input"
+      class="p-2 border border-gray-300 rounded mb-4"
     />
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <Card
@@ -13,6 +13,7 @@
         :title="product.title"
         :description="product.description"
         :image="product.image"
+        class="hover:shadow-lg transition-shadow duration-300"
       />
     </div>
   </div>
@@ -38,11 +39,7 @@ const filteredProducts = computed(() => {
 </script>
 
 <style scoped>
-.product-gallery {
-  @apply p-4;
-}
-
-.search-input {
-  @apply mb-4 p-2 border border-gray-300 rounded;
+.grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
 }
 </style>

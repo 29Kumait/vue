@@ -1,38 +1,40 @@
 <template>
-  <div :class="shapeClasses" :style="{ backgroundColor: color }">
-    <p>{{ type }}</p>
+  <div :class="shapeClasses">
+    <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
-
 const props = defineProps({
-  type: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: true,
-  },
+  type: { type: String, required: true },
+  color: { type: String, required: true }
 });
 
-const shapeClasses = computed(() => [
-  'p-4',
-  'rounded-lg',
-  'shadow-md',
-  'transition-transform',
-  'duration-300',
-  'ease-in-out',
-  'transform',
-  'hover:scale-105',
-  'responsive-shape',
-]);
+const shapeClasses = computed(() => {
+  const baseClasses = [
+    'transition-transform',
+    'duration-500',
+    'ease-in-out',
+    'transform',
+    'hover:scale-105',
+    props.color
+  ];
+
+  switch (props.type) {
+    case 'circle':
+      return [...baseClasses, 'rounded-full', 'w-16', 'h-16'];
+    case 'square':
+      return [...baseClasses, 'w-16', 'h-16'];
+    case 'rectangle':
+      return [...baseClasses, 'w-32', 'h-16'];
+    default:
+      return baseClasses;
+  }
+});
 </script>
 
 <style scoped>
-.responsive-shape {
-  @apply w-full md:w-1/2 lg:w-1/3;
+.shape-container {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
 }
 </style>
