@@ -1,48 +1,78 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onServerPrefetch, onMounted, ref } from 'vue'
 import Avatar from './Avatar.vue'
 import { useUserStore } from '../stores/useUserStore'
 import { useAuth } from '../composables/useAuth'
 import { useProfile } from '../composables/useProfile'
 
-// Get profile-related reactive state and methods
-const { loading, errorMsg, username, avatarUrl, getProfile, updateProfile } = useProfile()
-
-// Access the user store for authentication info
+const { username, avatarUrl, getProfile, updateProfile } = useProfile()
+// User store for auth info
 const userStore = useUserStore()
 
-// Helper to format a date string
-const formatDate = (date: string) => {
+// Local loading & error
+const loading = ref<boolean>(false)
+const errorMsg = ref<string>('')
+
+// --- 1) Single serverPrefetch call:
+onServerPrefetch(async () => {
+  await fetchProfileIfLoggedIn()
+})
+
+// --- 2) Single onMounted call:
+onMounted(async () => {
+  await fetchProfileIfLoggedIn()
+})
+
+// DRY fetch function
+async function fetchProfileIfLoggedIn() {
+  if (!userStore.user) return
+  loading.value = true
+  try {
+    await getProfile(userStore.user)
+  } catch (err) {
+    errorMsg.value = (err as Error).message
+    console.error('Account error:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Format a date
+function formatDate(date: string) {
   if (!date) return ''
   const d = new Date(date)
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`
 }
 
-// Computed property for formatted last sign-in date
+// Computed last sign-in
 const formattedLastSignIn = computed(() => {
-  return userStore.user?.last_sign_in_at ? formatDate(userStore.user.last_sign_in_at) : ''
+  return userStore.user?.last_sign_in_at
+    ? formatDate(userStore.user.last_sign_in_at)
+    : ''
 })
 
-// When the component mounts, fetch the profile if the user exists
-onMounted(() => {
-  if (userStore.user) {
-    getProfile(userStore.user)
-  }
-})
-
-// Called when the user updates their profile
+// Update profile
 function handleUpdateProfile() {
   updateProfile(userStore.user, username.value, avatarUrl.value)
 }
 
+// Sign out
 const { signOut } = useAuth()
-
 function handleSignOut() {
   signOut()
 }
 </script>
 
 <template>
+  <div class="account">
+    <div v-if="loading">Loading profile...</div>
+    <div v-else-if="errorMsg" class="error">{{ errorMsg }}</div>
+    <div v-else>
+      <p>Username: {{ username }}</p>
+      <!-- <img :src="avatarUrl" alt="User Avatar" /> -->
+    </div>
+  </div>
+
   <div class="@container text-text">
     <div class="flex justify-between items-baseline">
       <input
@@ -53,9 +83,11 @@ function handleSignOut() {
       />
       <p class="text-s">Signed: {{ formattedLastSignIn }}</p>
     </div>
+
     <div class="max-w-md mx-auto p-3 shadow-md">
-      <!-- Avatar component with v-model for the avatar URL -->
+      <!-- Avatar component -->
       <Avatar v-model:path="avatarUrl" @upload="handleUpdateProfile" :size="10" />
+
       <div class="flex flex-auto justify-end items-baseline text-sky-900">
         <span class="relative inline-block">
           <span class="relative bg-p3-yellow -skew-y-3 inline-block">Name:</span>

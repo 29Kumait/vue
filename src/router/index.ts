@@ -1,72 +1,80 @@
-// src/router/index.ts
+import {
+  createRouter as _createRouter,
+  createMemoryHistory,
+  createWebHistory,
+  type RouteRecordRaw,
+} from 'vue-router'
+import { useUserStore } from '../stores/useUserStore' // adjust the path if needed
 
-import { createRouter, createWebHistory } from "vue-router";
-import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
-import { useUserStore } from "../stores/useUserStore";
-
+// 1) Define your routes array
 const routes: RouteRecordRaw[] = [
   {
-    path: "/",
-    name: "First",
-    component: () => import("../views/First.vue"),
+    path: '/',
+    name: 'First',
+    component: () => import('../views/First.vue'),
   },
   {
-    path: "/auth",
-    name: "Auth",
-    component: () => import("../components/Auth.vue"),
+    path: '/auth',
+    name: 'Auth',
+    component: () => import('../components/Auth.vue'),
   },
   {
-    path: "/second",
-    name: "Second",
-    component: () => import("../views/Second.vue"),
+    path: '/second',
+    name: 'Second',
+    component: () => import('../views/Second.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/avatar",
-    name: "Avatar",
-    component: () => import("../components/Avatar.vue"),
+    path: '/avatar',
+    name: 'Avatar',
+    component: () => import('../components/Avatar.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/signup",
-    name: "Signup",
-    component: () => import("../components/Signup.vue"),
+    path: '/signup',
+    name: 'Signup',
+    component: () => import('../components/Signup.vue'),
   },
   {
-    path: "/account",
-    name: "Account",
-    component: () => import("../components/Account.vue"),
+    path: '/account',
+    name: 'Account',
+    component: () => import('../components/Account.vue'),
     meta: { requiresAuth: true },
   },
-];
+]
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
-});
+// 2) Create a function that returns a new router each time
+//    By default, use `import.meta.env.SSR` to detect server vs. client.
+export function createRouter(isServer = import.meta.env.SSR) {
+  const router = _createRouter({
+    history: isServer
+      ? createMemoryHistory()        // SSR mode
+      : createWebHistory(),          // Client mode
+    routes,
+  })
 
-router.beforeEach(async (
-  to: RouteLocationNormalized,
-  _from: RouteLocationNormalized,
-  next: NavigationGuardNext
-) => {
-  const userStore = useUserStore();
+  // 3) Add your navigation guards here:
+  router.beforeEach(async (to, _from, next) => {
+    const userStore = useUserStore()
 
-  if (!userStore.user) {
-    await userStore.fetchUserSession();
-  }
+    // Attempt session fetch if user not yet loaded:
+    if (!userStore.user) {
+      await userStore.fetchUserSession()
+    }
 
-  // Force user to sign in if not authenticated.
-  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
-    return next({ name: "Auth" });
-  }
+    // Protect routes that require auth:
+    if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+      return next({ name: 'Auth' })
+    }
 
-  // If already logged in, block access to the '/auth' page.
-  if (to.name === "Auth" && userStore.isAuthenticated) {
-    return next({ name: "Second" });
-  }
+    // If already authenticated, redirect away from /auth to e.g. /second
+    if (to.name === 'Auth' && userStore.isAuthenticated) {
+      return next({ name: 'Second' })
+    }
 
-  next();
-});
+    next()
+  })
 
-export default router;
+  return router
+}
+

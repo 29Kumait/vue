@@ -40,22 +40,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted , onServerPrefetch} from 'vue'
 import Drawer from './Drawer.vue'
 import { useUserStore } from '../stores/useUserStore'
 import Account from './Account.vue'
 import Auth from './Auth.vue'
 import Signup from './Signup.vue'
-
-// Get the user store and attempt to fetch the user session on mount.
 const userStore = useUserStore()
+
+onServerPrefetch(async () => {
+  await userStore.fetchUserSession()
+})
+
 onMounted(async () => {
   await userStore.fetchUserSession()
 })
 
-// Compute the authentication status.
 const isAuthenticated = computed<boolean>(() => userStore.isAuthenticated)
-
-// Local state to toggle between Signup and Login modes.
 const isSignupMode = ref<boolean>(false)
 </script>
