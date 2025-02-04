@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
+  <div class="bg-p3-light dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
     <div>
       <span class="inline-flex items-center justify-center rounded-md bg-indigo-500 p-2 shadow-lg">
         <svg class="icon h-9 w-9" fill="none" viewBox="0 0 1024 1024" stroke="currentColor">

@@ -258,6 +258,10 @@
   background-color: var(--color-oklch-purple);
 }
 
+@utility bg-white {
+  background-color: white;
+}
+
 /* @layer utilities {
 
   .slide-up-enter-active,
