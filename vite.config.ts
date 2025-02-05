@@ -11,11 +11,4 @@ export default defineConfig({
   ssr: {
     noExternal: ['pinia', 'vue-router']
   },
-  build: {
-    rollupOptions: {
-      input: {
-        server: './src/entry-server.ts'
-      }
-    }
-  }
 })
