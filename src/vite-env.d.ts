@@ -4,7 +4,7 @@ export { }
 
 declare global {
     interface Window {
-        __PINIA?: string
+        __PINIA_STATE__?: string
     }
 }
 
