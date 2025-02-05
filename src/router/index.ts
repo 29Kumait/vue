@@ -47,7 +47,7 @@ export function createRouter(isServer = import.meta.env.SSR) {
   const router = _createRouter({
     history: isServer ? createMemoryHistory() : createWebHistory(),
     routes,
-    // Replace the scrollBehavior configuration with the following:
+    // Replacing the scrollBehavior configuration to fix the out commented code:
     scrollBehavior: (to) => {
       if (to.hash && to.hash.trim() !== '') {
         return { behavior: 'smooth', el: to.hash, top: -80 };

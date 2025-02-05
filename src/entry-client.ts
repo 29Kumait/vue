@@ -9,7 +9,6 @@ if (window.__PINIA_STATE__) {
     pinia.state.value = JSON.parse(window.__PINIA_STATE__);
 
 }
-
 router.isReady()
     .then(() => {
         app.mount("#app", true);
