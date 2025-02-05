@@ -98,7 +98,7 @@ async function startServer() {
       if (!isProd) {
         // (vite.ssrFixStacktrace(err) could be used here if vite instance is in scope)
       }
-      console.error(`Error rendering ${req.originalUrl}:`, err);
+      console.error("Error rendering %s:", req.originalUrl, err);
       res.status(500).end(err.message);
     }
   });
