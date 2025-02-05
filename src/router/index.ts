@@ -1,12 +1,12 @@
+// src/router.ts
 import {
   createRouter as _createRouter,
   createMemoryHistory,
   createWebHistory,
   type RouteRecordRaw,
-} from 'vue-router'
-import { useUserStore } from '../stores/useUserStore' // adjust the path if needed
+} from 'vue-router';
+import { useUserStore } from '../stores/useUserStore';
 
-// 1) Define your routes array
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/third',
+    name: 'Third',
+    component: () => import('../views/Third.vue'),
+  },
+  {
     path: '/avatar',
     name: 'Avatar',
     component: () => import('../components/Avatar.vue'),
@@ -41,40 +46,45 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/Account.vue'),
     meta: { requiresAuth: true },
   },
-]
+];
 
-// 2) Create a function that returns a new router each time
-//    By default, use `import.meta.env.SSR` to detect server vs. client.
 export function createRouter(isServer = import.meta.env.SSR) {
   const router = _createRouter({
-    history: isServer
-      ? createMemoryHistory()        // SSR mode
-      : createWebHistory(),          // Client mode
+    history: isServer ? createMemoryHistory() : createWebHistory(),
     routes,
-  })
+    // Replace the scrollBehavior configuration with the following:
+    scrollBehavior: (to) => {
+      if (to.hash && to.hash.trim() !== '') {
+        return { behavior: 'smooth', el: to.hash, top: -80 };
+      } else {
+        return { left: 0, top: 0 };
+      }
+    },
+    // scrollBehavior: (to) => ({
+    //   el: to.hash,
+    //   behavior: 'smooth',
+    //   top: -80,
+    // }),
+  });
 
-  // 3) Add your navigation guards here:
   router.beforeEach(async (to, _from, next) => {
-    const userStore = useUserStore()
-
-    // Attempt session fetch if user not yet loaded:
-    if (!userStore.user) {
-      await userStore.fetchUserSession()
+    const userStore = useUserStore();
+    try {
+      if (!userStore.user) {
+        await userStore.fetchUserSession();
+      }
+      if (to.meta.requiresAuth) {
+        return userStore.isAuthenticated ? next() : next({ name: 'Auth' });
+      }
+      if (to.name === 'Auth' && userStore.isAuthenticated) {
+        return next({ name: 'Second' });
+      }
+      next();
+    } catch (error) {
+      console.error('Navigation error:', error);
+      next({ name: 'Auth' });
     }
+  });
 
-    // Protect routes that require auth:
-    if (to.meta.requiresAuth && !userStore.isAuthenticated) {
-      return next({ name: 'Auth' })
-    }
-
-    // If already authenticated, redirect away from /auth to e.g. /second
-    if (to.name === 'Auth' && userStore.isAuthenticated) {
-      return next({ name: 'Second' })
-    }
-
-    next()
-  })
-
-  return router
+  return router;
 }
-
