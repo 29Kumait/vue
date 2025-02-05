@@ -25,11 +25,6 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/third',
-    name: 'Third',
-    component: () => import('../views/Third.vue'),
-  },
-  {
     path: '/avatar',
     name: 'Avatar',
     component: () => import('../components/Avatar.vue'),
