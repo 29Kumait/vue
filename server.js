@@ -1,4 +1,4 @@
-// server.js (Production‑Ready)
+// server.js
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from "url";
@@ -10,63 +10,66 @@ import rateLimit from "express-rate-limit";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
 
-// Add rate limiter to all requests
-
 async function startServer() {
   const app = express();
 
+  // Optional rate limiting
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
   });
   app.use(limiter);
-  let template;
 
-  let createApp; // function to create a fresh app instance per request
+  let template;
+  let createApp; // Will hold the SSR createApp function
 
   if (isProd) {
-    // Serve static files from the client build output.
-    app.use(express.static(path.resolve(__dirname, "../dist/client")));
+    // 1. Serve static files from the compiled client folder,
+    //    but disable directory indexing.
+    app.use(
+      express.static(path.resolve(__dirname, "../dist/client"), {
+        index: false, // <== important: no auto "index.html" for subfolders
+      })
+    );
 
-    // Read and cache the HTML template from the built client folder.
+    // 2. Read the template (the main "index.html") from dist/client.
     template = await fs.readFile(
       path.resolve(__dirname, "../dist/client/index.html"),
       "utf-8"
     );
 
-    // Import the pre‑built SSR bundle.
+    // 3. Import the prebuilt SSR bundle from dist/server.
     const ssrModule = await import("../dist/server/entry-server.js");
     createApp = ssrModule.createApp;
   } else {
-    // In development mode, create the Vite server in middleware mode.
+    // ---- DEVELOPMENT MODE (Vite dev server) ----
     const vite = await createViteServer({
       server: { middlewareMode: "ssr" },
       appType: "custom",
     });
     app.use(vite.middlewares);
 
-    // Read the index.html from project root and transform it with Vite.
     const rawTemplate = await fs.readFile(
       path.resolve(__dirname, "index.html"),
       "utf-8"
     );
+    // Vite will transform the HTML (e.g. inject modules/scripts)
     template = await vite.transformIndexHtml("/", rawTemplate);
 
-    // Load the SSR entry module on each request.
     createApp = (await vite.ssrLoadModule("/src/entry-server.ts")).createApp;
   }
 
+  // 4. Universal SSR route: Catch everything else and render the app.
   app.use("*", async (req, res) => {
     try {
       const url = req.originalUrl;
-      // 1. Create a fresh app instance for every request.
-      const { app: ssrApp, router, pinia } = createApp();
 
-      // 2. Set up the router.
+      // Create fresh app instance and set up router
+      const { app: ssrApp, router, pinia } = createApp();
       router.push(url);
       await router.isReady();
 
-      // 3. Run any asyncData hooks (if defined) on matched components.
+      // Run asyncData hooks if any (optional)
       const matched = router.currentRoute.value.matched;
       await Promise.all(
         matched.map((record) => {
@@ -77,14 +80,14 @@ async function startServer() {
         })
       );
 
-      // 4. Render the Vue app to HTML.
+      // Render Vue app to string
       const { renderToString } = await import("vue/server-renderer");
       const appHtml = await renderToString(ssrApp);
 
-      // 5. Safely serialize the Pinia state.
+      // Serialize pinia state
       const state = serialize(pinia.state.value, { isJSON: true });
 
-      // 6. Inject the rendered app and state into the HTML template.
+      // Inject rendered HTML and state into template
       const html = template
         .replace("<!--app-html-->", appHtml)
         .replace(
@@ -94,17 +97,16 @@ async function startServer() {
 
       res.status(200).set({ "Content-Type": "text/html" }).end(html);
     } catch (err) {
-      // In development, try to fix Vite's stacktrace for easier debugging.
-      if (!isProd) {
-        // (vite.ssrFixStacktrace(err) could be used here if vite instance is in scope)
-      }
-      console.error(`Error rendering ${req.originalUrl}:`, err);
+      console.error("Error rendering %s:", req.originalUrl, err);
       res.status(500).end(err.message);
     }
   });
 
+  // 5. Start the server
   const port = process.env.PORT || 3000;
-  app.listen(port, () => `Server running on http://localhost:${port}`);
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
 }
 
 startServer();
