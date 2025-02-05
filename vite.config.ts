@@ -8,8 +8,14 @@ export default defineConfig({
     vue(),
     tailwindcss()
   ],
-
   ssr: {
     noExternal: ['pinia', 'vue-router']
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        server: './src/entry-server.ts'
+      }
+    }
   }
 })

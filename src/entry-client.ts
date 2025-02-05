@@ -1,13 +1,19 @@
-import { createApp } from './entry-server'
-import './style.css'
+// src/entry-client.ts
+import { createApp } from "./entry-server";
+import "./style.css";
 
-// 1) Create the app in "client mode"
-const { app, router, pinia } = createApp(false)
+const { app, router, pinia } = createApp();
 
-// 2) Hydrate Pinia from SSR if you inserted state into window.__PINIA
-if (window.__PINIA) pinia.state.value = JSON.parse(window.__PINIA)
+// Directly assign the pre-serialized state if it exists.
+if (window.__PINIA_STATE__) {
+    pinia.state.value = JSON.parse(window.__PINIA_STATE__);
 
-router.isReady().then(() => {
-    // 3) Hydrate the SSR-generated HTML
-    app.mount('#app', true)
-})
+}
+
+router.isReady()
+    .then(() => {
+        app.mount("#app", true);
+    })
+    .catch((error) => {
+        return (error);
+    });
