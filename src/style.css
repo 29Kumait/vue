@@ -1,0 +1,301 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* @variant dark (&:where(.dark, .dark *)); */
+
+
+@theme {
+  --font-display: "Inter", "system-ui", "Helvetica", " Arial", "sans-serif";
+  --text-big--line-height: 1.5;
+  --text-big--font-weight: 400;
+
+  --color-neon-pink: oklch(71.7% 0.25 360);
+  --color-neon-lime: oklch(91.5% 0.258 129);
+  --color-neon-cyan: oklch(91.3% 0.139 195.8);
+  --color-neon-fuchsia: oklch(70.2% 0.322 328.363);
+  --color-neon-springgreen: oklch(87.5% 0.235 151.024);
+  --color-neon-indigo: oklch(52.5% 0.293 292.297);
+
+  --color-text: oklch(87% 0.02 262.98);
+  --color-bg: oklch(14% 0.02 262.98);
+  --color-a-cyan: #39c5cf;
+
+  --color-background-light: oklch(0.98 0.02 240);
+  --color-background-dark: oklch(0.2 0.07 240);
+  --color-primary: var(--color-blue-500, oklch(0.5 0.1 340));
+  --color-secondary: var(--color-green-500, oklch(0.7 0.12 80));
+  --color-accent: var(--color-pink-500, oklch(0.6 0.15 120));
+
+
+  --color-p3-light: color(display-p3 0.98 0.8 0.1);
+  --color-p3-dark: color(display-p3 0.2 0.5 0.3);
+  --color-p3-accent: color(display-p3 0.5 0.7 0.6);
+  --color-p3-blue: color(display-p3 0.1 0.2 0.8);
+  --color-p3-red: color(display-p3 0.8 0.1 0.2);
+  --color-p3-green: color(display-p3 0.1 0.8 0.2);
+  --color-p3-purple: color(display-p3 0.5 0.1 0.8);
+  --color-p3-yellow: color(display-p3 0.8 0.8 0.1);
+  --color-p3-cyan: color(display-p3 0.1 0.8 0.8);
+  --color-p3-indigo: color(display-p3 0.1 0.2 0.5);
+  --color-p3-brown: color(display-p3 0.5 0.3 0.2);
+  --color-p3-gray: color(display-p3 0.5 0.5 0.5);
+  --color-p3-orange: color(display-p3 0.8 0.5 0.1);
+  --color-p3-pink: color(display-p3 0.8 0.1 0.5);
+  --color-p3-teal: color(display-p3 0.1 0.5 0.5);
+
+
+  --color-oklch-yellow: oklch(80% 0.1 90);
+  --color-oklch-pink: oklch(60% 0.3 300);
+  --color-oklch-green: oklch(70% 0.2 120);
+  --color-oklch-purple: oklch(50% 0.2 270);
+
+
+  --spacing: 0.25rem;
+  --spacing-6: calc(var(--spacing) * 6);
+  /* 1.5rem */
+  --spacing-8: calc(var(--spacing) * 8);
+  /* 2rem */
+  --primary-color: oklch(0.8 0.25 245);
+  /* Vivid blue */
+  --secondary-color: oklch(0.7 0.15 270);
+  /* Soft purple */
+  --accent-color: oklch(0.85 0.3 300);
+  /* Vibrant pink */
+  --bg-gradient: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+
+  --inset-shadow-2xs: inset 0 1px rgb(0 0 0 / 0.05);
+  --inset-shadow-xs: inset 0 1px 1px rgb(0 0 0 / 0.05);
+  --inset-shadow-sm: inset 0 2px 4px rgb(0 0 0 / 0.05);
+
+  --animation-duration: 0.5s;
+  --animation-ease: ease;
+
+  /* Slide-up Animation */
+  --animate-slide-up: slide-up var(--animation-duration) var(--animation-ease) forwards;
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+}
+
+
+@utility slide-up {
+  animation: var(--animate-slide-up);
+}
+
+
+/* Utilities and Components */
+@utility vertical-line {
+  position: absolute;
+  width: 3px;
+  background: var(--bg-gradient);
+  left: 2rem;
+  border-radius: 9999px;
+}
+
+@utility animated-bg {
+  background: linear-gradient(to right,
+      var(--primary-color),
+      var(--accent-color));
+}
+
+@utility spacious-container {
+  margin-inline: auto;
+  padding-inline: 3rem;
+  padding-block: 4rem;
+  max-width: 80rem;
+}
+
+@utility wide-section {
+  margin-inline: auto;
+  max-width: 64rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  letter-spacing: 0.025em;
+}
+
+@utility responsive-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(1, 1fr);
+
+  @media (min-width: var(--breakpoint-md)) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: var(--breakpoint-lg)) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@utility grid-item {
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+@utility gradient-card {
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1);
+  color: white;
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+}
+
+@utility glow-effect {
+  position: relative;
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: 0 0 10px var(--accent-color);
+  }
+}
+
+/* Components */
+@utility section {
+  position: relative;
+  padding: 2rem;
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  border: 1px solid;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@utility glass-effect {
+  backdrop-filter: blur(0.375rem);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@utility bg-card-gradient {
+  background: linear-gradient(to bottom right,
+      var(--color-card-start),
+      var(--color-card-end));
+}
+
+
+@layer utilities {
+  @container sidebar (min-width: 48rem) {
+    .sidebar-grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+@utility ease-fluid {
+  transition-timing-function: var(--ease-fluid);
+}
+
+@utility ease-snappy {
+  transition-timing-function: var(--ease-snappy);
+}
+
+@utility transition-all {
+  transition-property: all;
+}
+
+@utility delay-100 {
+  transition-delay: 100ms;
+}
+
+@utility delay-200 {
+  transition-delay: 200ms;
+}
+
+@utility delay-300 {
+  transition-delay: 300ms;
+}
+
+
+@utility bg-p3-red {
+  background-color: var(--color-p3-red);
+}
+
+@utility bg-p3-blue {
+  background-color: var(--color-p3-blue);
+}
+
+@utility bg-oklch-yellow {
+  background-color: var(--color-oklch-yellow);
+}
+
+@utility bg-oklch-pink {
+  background-color: var(--color-oklch-pink);
+}
+
+@utility text-oklch-green {
+  color: var(--color-oklch-green);
+}
+
+@utility bg-oklch-purple {
+  background-color: var(--color-oklch-purple);
+}
+
+/* @layer utilities {
+
+  .slide-up-enter-active,
+  .slide-up-leave-active {
+    @apply transition-transform transition-opacity ease-snappy;
+    transition-duration: 300ms;
+  }
+
+  .slide-up-enter-from {
+    @apply translate-y-5 opacity-0;
+  }
+
+  .slide-up-leave-to {
+    @apply translate-y-5 opacity-0;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    @apply transition-opacity ease-snappy;
+    transition-duration: 300ms;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    @apply opacity-0;
+  }
+} */
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: var(--color-p3-indigo);
+    background-color: var(--color-p3-gray);
+
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+}
