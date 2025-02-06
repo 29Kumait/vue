@@ -8,8 +8,7 @@ export default defineConfig({
     vue(),
     tailwindcss()
   ],
-
   ssr: {
     noExternal: ['pinia', 'vue-router']
-  }
+  },
 })
