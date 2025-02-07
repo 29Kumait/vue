@@ -10,13 +10,13 @@ This project uses Vue 3 with Vite SSR, Tailwind v4, and Supabase for authenticat
 
 ## Installation
 
-```bash
+````bash
 # Install dependencies
 npm install
 
 # Create .env file and configure environment variables
 cp .env.example .env
-```
+```json
 
 ## Environment Variables
 
@@ -26,7 +26,7 @@ Create a `.env` file with:
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_API_URL=your_api_url
-```
+```json
 
 ## Development
 
@@ -39,7 +39,7 @@ npm test
 
 # Lint and fix files
 npm run lint
-```
+````
 
 ## Production Build
 
@@ -56,14 +56,14 @@ npm run serve:ssr
 
 ## Project Structure
 
-```
+```md
 src/
-├── components/     # Reusable Vue components
-├── composables/    # Vue composable hooks
-├── router/        # Vue Router configuration
-├── stores/        # Pinia state management
-├── views/         # Page components
-└── ...           # Other configuration files
+├── components/ # Reusable Vue components
+├── composables/ # Vue composable hooks
+├── router/ # Vue Router configuration
+├── stores/ # Pinia state management
+├── views/ # Page components
+└── ... # Other configuration files
 ```
 
 ## Features
@@ -100,13 +100,13 @@ The application can be deployed to various platforms. Here's a guide for Vercel 
 npm run build
 ```
 
-2. Install Vercel CLI:
+1. Install Vercel CLI:
 
 ```bash
 npm i -g vercel
 ```
 
-3. Deploy to Vercel:
+1. Deploy to Vercel:
 
 ```bash
 # First-time deployment

@@ -10,6 +10,6 @@ declare module '*.vue' {
 
 declare global {
     interface Window {
-        __PINIA?: Record<string, any>
+        __PINIA_STATE__?: Record<string, any>
     }
 }

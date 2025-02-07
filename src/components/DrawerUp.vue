@@ -1,4 +1,5 @@
 <template>
+    <div v-if="isClient">
   <Drawer>
     <!-- Sidebar header slot -->
     <template #sidebar-header>
@@ -37,6 +38,7 @@
       </div>
     </template>
   </Drawer>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -54,8 +56,10 @@ onServerPrefetch(async () => {
 
 onMounted(async () => {
   await userStore.fetchUserSession()
+  isClient.value = true;
 })
 
 const isAuthenticated = computed<boolean>(() => userStore.isAuthenticated)
 const isSignupMode = ref<boolean>(false)
+const isClient = ref<boolean>(false);
 </script>

@@ -1,14 +1,19 @@
-import { createApp } from './entry-server'
-import './style.css'
+// src/entry-client.ts
+import { createApp } from "./entry-server";
+import "./style.css";
 
-const { app, router, pinia } = createApp(false)
+const { app, router, pinia } = createApp();
 
-// Hydrate Pinia from SSR if you inserted state into window.__PINIA
-if (window.__PINIA) pinia.state.value = (window.__PINIA)
+// Restore the pre-serialized Pinia state without JSON.parse.
+if (window.__PINIA_STATE__) {
+    pinia.state.value = window.__PINIA_STATE__;
+}
 
-router.isReady().then(() => {
-    // Hydrate the SSR-generated HTML
-    app.mount('#app', true)
-}).catch(err => {
-    console.error('Router is not ready:', err)
-});
+router.isReady()
+    .then(() => {
+        // Hydrate the SSR-rendered markup.
+        app.mount("#app", true);
+    })
+    .catch((err) => {
+        console.error("Client hydration failed:", err);
+    });

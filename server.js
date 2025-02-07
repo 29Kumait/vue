@@ -1,11 +1,11 @@
 // server.js
+
 import express from "express";
 import { createServer as createViteServer } from "vite";
-import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
 import serialize from "serialize-javascript";
-import rateLimit from "express-rate-limit";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -13,63 +13,52 @@ const isProd = process.env.NODE_ENV === "production";
 async function startServer() {
   const app = express();
 
-  //  Rate limiting middleware
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  });
-  app.use(limiter);
-
-  let template;
-  let createApp; // Will hold the SSR createApp function
+  let template, createApp;
 
   if (isProd) {
-    // 1. Serve static files from the compiled client folder, but disable directory indexing.
-    app.use(
-      express.static(path.resolve(__dirname, "../dist/client"), {
-        index: false, // <== important: no auto "index.html" for subfolders
-      })
-    );
-
-    // 2. Read the template (the main "index.html") from dist/client.
+    // Serve static assets from the client build output.
+    app.use(express.static(path.resolve(__dirname, "../dist/client")));
+    // Read and cache the HTML template.
     template = await fs.readFile(
-      path.resolve(__dirname, "../dist/client/index.html"),
+      path.resolve(__dirname, "../dist/client"),
       "utf-8"
     );
 
-    // 3. Import the prebuilt SSR bundle from dist/server.
+    // Pre-built SSR bundle.
     const ssrModule = await import("../dist/server/entry-server.js");
+
     createApp = ssrModule.createApp;
   } else {
-    // ---- DEVELOPMENT MODE (Vite dev server) ----
+    // In development mode, create Vite in middleware mode.
     const vite = await createViteServer({
       server: { middlewareMode: "ssr" },
       appType: "custom",
     });
+
     app.use(vite.middlewares);
 
+    // Read and transform the index.html on each request.
     const rawTemplate = await fs.readFile(
       path.resolve(__dirname, "index.html"),
       "utf-8"
     );
-    // Vite will transform the HTML (e.g. inject modules/scripts)
-    template = await vite.transformIndexHtml("/", rawTemplate);
 
+    template = await vite.transformIndexHtml("/", rawTemplate);
+    // Load the SSR module fresh on every request.
     createApp = (await vite.ssrLoadModule("/src/entry-server.ts")).createApp;
   }
 
-  // 4. Universal SSR route: Catch everything else and render the app.
   app.use("*", async (req, res) => {
     try {
-      const url = req.originalUrl;
-
-      // Create fresh app instance and set up router
-      const { app: ssrApp, router, pinia } = createApp();
-      router.push(url);
+      const URL = req.originalUrl;
+      // 1. Create a fresh app instance per request.
+      const { app: vueApp, router, pinia } = createApp();
+      // 2. Set up the router.
+      router.push(URL);
       await router.isReady();
-
-      // Run asyncData hooks if any (optional)
+      // 3. (Optional) Call asyncData hooks on matched components if needed.
       const matched = router.currentRoute.value.matched;
+
       await Promise.all(
         matched.map((record) => {
           const asyncData = record.components?.default?.asyncData;
@@ -79,33 +68,29 @@ async function startServer() {
         })
       );
 
-      // Render Vue app to string
+      // 4. Render the Vue app to HTML.
       const { renderToString } = await import("vue/server-renderer");
-      const appHtml = await renderToString(ssrApp);
-
-      // Serialize pinia state
+      const appHtml = await renderToString(vueApp);
+      // 5. Serialize the Pinia state. Since we use serialize with { isJSON: true }, the value is directly a valid JS object.
       const state = serialize(pinia.state.value, { isJSON: true });
-
-      // Inject rendered HTML and state into template
+      // 6. Inject the rendered app and state into the HTML template.
       const html = template
         .replace("<!--app-html-->", appHtml)
         .replace(
           "<!--pinia-state-->",
-          `<script>window.__PINIA = ${state}</script>`
+          `<script>window.__PINIA_STATE__ = ${state}</script>`
         );
-
       res.status(200).set({ "Content-Type": "text/html" }).end(html);
-    } catch (err) {
-      console.error("Error rendering %s:", req.originalUrl, err);
-      res.status(500).end(err.message);
+    } catch (error) {
+      console.error(`Error rendering ${req.originalUrl}:`, error);
+      res.status(500).end(error.message);
     }
   });
 
-  // 5. Start the server
   const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-  });
+  app.listen(port, () =>
+    console.log(`Server running on http://localhost:${port}`)
+  );
 }
 
 startServer();
