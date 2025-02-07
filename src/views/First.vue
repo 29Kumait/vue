@@ -2,11 +2,11 @@
   <main class="space-y-16 bg-light">
     <!-- Section 1 -->
        <section
-      class="h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-background-light)] to-[var(--color-background-dark)]"
+      class="h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-background-dark)] to-[var(--color-background-dark)]"
     >
       <div class="text-center">
-        <h1 class="text-[var(--color-neon-lime)] text-6xl font-bold drop-shadow-md">  Page: HOME  </h1>
-        <p class="text-[var(--color-neon-pink)] mt-4 text-lg">
+        <h1 class="text-[var(--color-neon-springgreen)] text-6xl font-bold drop-shadow-md">  Page: HOME  </h1>
+        <p class="text-[var(--color-neon-lime)] mt-4 text-lg">
           colors, and technology.
         </p>
       </div>
@@ -72,10 +72,6 @@
     </section>
 
     <!-- P3 Colors -->
-         <div class="bg-p3-light text-p3-dark">
-      P3 Colors
-    </div>
-
     <div class="bg-p3-blue text-white p-4 rounded">
       <h1 class="text-2xl">Display P3 Color</h1>
     </div>
