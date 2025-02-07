@@ -20,7 +20,7 @@ async function startServer() {
     app.use(express.static(path.resolve(__dirname, "../dist/client")));
     // Read and cache the HTML template.
     template = await fs.readFile(
-      path.resolve(__dirname, "../dist/client"),
+      path.resolve(__dirname, "../dist/client/index.html"),
       "utf-8"
     );
 
