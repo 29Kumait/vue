@@ -1,13 +1,13 @@
 <template>
   <main class="space-y-16 bg-light">
     <!-- Section 1 -->
-    <section
-      class="h-screen flex items-center justify-center bg-gradient-to-b from-[--color-background-light] to-[--color-background-dark]"
+       <section
+      class="h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-background-light)] to-[var(--color-background-dark)]"
     >
       <div class="text-center">
-        <h1 class="text-[--color-primary] text-6xl font-bold drop-shadow-md">  Page: HOME  </h1>
-        <p class="text-[--color-secondary] mt-4 text-lg">
-      colors, and technology.
+        <h1 class="text-[var(--color-primary)] text-6xl font-bold drop-shadow-md">  Page: HOME  </h1>
+        <p class="text-[var(--color-secondary)] mt-4 text-lg">
+          colors, and technology.
         </p>
       </div>
     </section>
@@ -72,9 +72,12 @@
     </section>
 
     <!-- P3 Colors -->
-    <div class="bg-[--color-p3-light] text-[--color-p3-dark]">
-       P3 Colors
+         <div class="bg-[var(--color-p3-light)] text-[var(--color-p3-dark)]">
+      P3 Colors
     </div>
+    <!-- <div class="bg-[--color-p3-light] text-[--color-p3-dark]">
+       P3 Colors
+    </div> -->
     <div class="bg-p3-blue text-white p-4 rounded">
       <h1 class="text-2xl">Display P3 Color</h1>
     </div>
