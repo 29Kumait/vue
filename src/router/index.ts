@@ -1,79 +1,72 @@
+// src/router.ts
 import {
   createRouter as _createRouter,
   createMemoryHistory,
   createWebHistory,
   type RouteRecordRaw,
-} from 'vue-router'
-import { useUserStore } from '../stores/useUserStore'
+} from "vue-router";
+import { useUserStore } from "../stores/useUserStore";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    name: 'First',
-    component: () => import('../views/First.vue'),
+    path: "/",
+    name: "First",
+    component: () => import("../views/First.vue"),
   },
   {
-    path: '/auth',
-    name: 'Auth',
-    component: () => import('../components/Auth.vue'),
+    path: "/auth",
+    name: "Auth",
+    component: () => import("../components/Auth.vue"),
   },
   {
-    path: '/second',
-    name: 'Second',
-    component: () => import('../views/Second.vue'),
+    path: "/second",
+    name: "Second",
+    component: () => import("../views/Second.vue"),
     meta: { requiresAuth: true },
   },
   {
-    path: '/avatar',
-    name: 'Avatar',
-    component: () => import('../components/Avatar.vue'),
+    path: "/avatar",
+    name: "Avatar",
+    component: () => import("../components/Avatar.vue"),
     meta: { requiresAuth: true },
   },
   {
-    path: '/signup',
-    name: 'Signup',
-    component: () => import('../components/Signup.vue'),
+    path: "/signup",
+    name: "Signup",
+    component: () => import("../components/Signup.vue"),
   },
   {
-    path: '/account',
-    name: 'Account',
-    component: () => import('../components/Account.vue'),
+    path: "/account",
+    name: "Account",
+    component: () => import("../components/Account.vue"),
     meta: { requiresAuth: true },
   },
-]
-
-// -> Create a function that returns a new router each time  to detect server vs. client. //    By default, use `import.meta.env.SSR`
+];
 
 export function createRouter(isServer = import.meta.env.SSR) {
   const router = _createRouter({
-    history: isServer
-      ? createMemoryHistory()        // SSR mode
-      : createWebHistory(),          // Client mode
+    history: isServer ? createMemoryHistory() : createWebHistory(),
     routes,
-  })
+  });
 
-  // ->  Guards to protect routes that require auth
   router.beforeEach(async (to, _from, next) => {
-    const userStore = useUserStore()
-
-    // Attempt session fetch if user not yet loaded:
-    if (!userStore.user) {
-      await userStore.fetchUserSession()
+    const userStore = useUserStore();
+    try {
+      if (!userStore.user) {
+        await userStore.fetchUserSession();
+      }
+      if (to.meta.requiresAuth) {
+        return userStore.isAuthenticated ? next() : next({ name: "Auth" });
+      }
+      if (to.name === "Auth" && userStore.isAuthenticated) {
+        return next({ name: "Second" });
+      }
+      next();
+    } catch (error) {
+      console.error("Navigation error:", error);
+      next({ name: "Auth" });
     }
+  });
 
-    // Protect routes that require auth:
-    if (to.meta.requiresAuth && !userStore.isAuthenticated) {
-      return next({ name: 'Auth' })
-    }
-
-    // If already authenticated, redirect away from /auth to e.g. /second
-    if (to.name === 'Auth' && userStore.isAuthenticated) {
-      return next({ name: 'Second' })
-    }
-
-    next()
-  })
-
-  return router
+  return router;
 }
-

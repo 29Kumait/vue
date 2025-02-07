@@ -8,10 +8,8 @@ declare module '*.vue' {
     export default component
 }
 
-
 declare global {
     interface Window {
-        __PINIA?: string
+        __PINIA_STATE__?: Record<string, any>
     }
 }
-
