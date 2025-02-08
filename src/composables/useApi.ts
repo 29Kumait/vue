@@ -9,7 +9,7 @@ const apiClient = new DefaultApi(apiConfig);
 
 export function useApi() {
   const loading = ref(false);
-  const error = ref(null);
+  const error = ref<Error | null>(null);
 
   async function signUp(email: string, password: string) {
     loading.value = true;
@@ -17,7 +17,7 @@ export function useApi() {
       const response = await apiClient.authSignupPost({ email, password });
       return response.data;
     } catch (err) {
-      error.value = err;
+      error.value = err as Error;
       throw err;
     } finally {
       loading.value = false;
@@ -30,7 +30,7 @@ export function useApi() {
       const response = await apiClient.authSigninPost({ email, password });
       return response.data;
     } catch (err) {
-      error.value = err;
+      error.value = err as Error;
       throw err;
     } finally {
       loading.value = false;
@@ -43,7 +43,7 @@ export function useApi() {
       const response = await apiClient.authSignoutPost();
       return response.data;
     } catch (err) {
-      error.value = err;
+      error.value = err as Error;
       throw err;
     } finally {
       loading.value = false;
@@ -56,7 +56,7 @@ export function useApi() {
       const response = await apiClient.profileGet();
       return response.data;
     } catch (err) {
-      error.value = err;
+      error.value = err as Error;
       throw err;
     } finally {
       loading.value = false;
@@ -69,7 +69,7 @@ export function useApi() {
       const response = await apiClient.profilePut({ username, avatarUrl });
       return response.data;
     } catch (err) {
-      error.value = err;
+      error.value = err as Error;
       throw err;
     } finally {
       loading.value = false;
