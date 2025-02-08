@@ -5,7 +5,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
-import serialize from "serialize-javascript";
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === "production";
@@ -71,8 +71,10 @@ async function startServer() {
       // 4. Render the Vue app to HTML.
       const { renderToString } = await import("vue/server-renderer");
       const appHtml = await renderToString(vueApp);
-      // 5. Serialize the Pinia state. Since we use serialize with { isJSON: true }, the value is directly a valid JS object.
-      const state = serialize(pinia.state.value, { isJSON: true });
+      
+      // 5. valid jason string 
+      const state = JSON.stringify(pinia.state.value);
+
       // 6. Inject the rendered app and state into the HTML template.
       const html = template
         .replace("<!--app-html-->", appHtml)
