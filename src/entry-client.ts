@@ -1,6 +1,6 @@
 // src/entry-client.ts
 import { createApp } from "./entry-server";
-import "./style.css";
+// import "./style.css";
 
 const { app, router, pinia } = createApp();
 
