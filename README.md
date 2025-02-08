@@ -1,4 +1,4 @@
-# Vue 3 SSR Project
+# Vue 3 SSR. 
 
 This project uses Vue 3 with Vite SSR, Tailwind v4, and Supabase for authentication and data storage.
 
