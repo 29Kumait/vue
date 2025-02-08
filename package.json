@@ -10,7 +10,9 @@
     "build": "npm run build:client && npm run build:ssr",
     "serve:ssr": "node server.js",
     "preview": "vite preview",
-    "generate:api": "openapi-generator-cli generate -i openapi.yaml -g typescript-axios -o src/api"
+    "generate:api": "openapi-generator-cli generate -i openapi.yaml -g typescript-axios -o src/api",
+    "prebuild": "npm run generate:api",
+    "predev": "npm run generate:api"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",

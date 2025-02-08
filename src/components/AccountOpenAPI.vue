@@ -3,6 +3,9 @@ import { computed, onServerPrefetch, onMounted, ref } from 'vue'
 import Avatar from './Avatar.vue'
 import { useUserStore } from '../stores/useUserStore'
 import { useApi } from '../composables/useApi'
+import { useProfile } from '../composables/useProfile'
+
+const { username, avatarUrl } = useProfile()
 
 const { getProfile, updateProfile } = useApi()
 // User store for auth info
@@ -68,7 +71,6 @@ function handleSignOut() {
     <div v-else-if="errorMsg" class="error">{{ errorMsg }}</div>
     <div v-else>
       <p>Username: {{ username }}</p>
-      <!-- <img :src="avatarUrl" alt="User Avatar" /> -->
     </div>
   </div>
 
