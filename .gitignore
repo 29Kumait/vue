@@ -1,5 +1,9 @@
 .env
+.env.local
 
+# Generated API files
+src/api/*
+!src/api/.openapi-generator-ignore
 
 # Logs
 logs
