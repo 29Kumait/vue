@@ -35,6 +35,7 @@
                 <ul class="space-y-2">
                   <li><router-link to="/" class="text-blue-500 hover:text-blue-400">Home</router-link></li>
                   <li><router-link to="/second" class="text-blue-500 hover:text-blue-400">Page 2nd</router-link></li>
+                  <li><router-link to="/openapi" class="text-blue-500 hover:text-blue-400">OpenAPIPage</router-link></li>
                 </ul>
               </div>
             </div>

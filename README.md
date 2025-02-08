@@ -134,12 +134,6 @@ Create a `vercel.json` file in the root directory:
 }
 ```
 
-Remember to:
-
-- Add your environment variables in the Vercel dashboard
-- Configure your project settings for SSR support
-- Connect your GitHub repository for automatic deployments
-
 ## License
 
 This project is MIT licensed.

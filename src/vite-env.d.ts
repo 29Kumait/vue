@@ -13,3 +13,12 @@ declare global {
         __PINIA_STATE__?: Record<string, any>
     }
 }
+
+
+interface ImportMetaEnv {
+    readonly VITE_API_URL: string
+}
+
+interface ImportMeta {
+    readonly env: ImportMetaEnv
+}å

@@ -19,12 +19,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import("../components/Auth.vue"),
   },
   {
-    path: "/second",
-    name: "Second",
-    component: () => import("../views/Second.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
     path: "/avatar",
     name: "Avatar",
     component: () => import("../components/Avatar.vue"),
@@ -40,6 +34,17 @@ const routes: RouteRecordRaw[] = [
     name: "Account",
     component: () => import("../components/Account.vue"),
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/second",
+    name: "Second",
+    component: () => import("../views/Second.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/openapi",
+    name: "OpenAPIPage",
+    component: () => import("../views/OpenAPIPage.vue"),
   },
 ];
 
