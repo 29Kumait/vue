@@ -1,52 +1,89 @@
-import { ref } from 'vue';
+// src/composables/useApi.ts
+import { ref, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useNotificationStore } from '../stores/useNotificationStore'
 import { DefaultApi, Configuration } from '../api';
 
 const apiConfig = new Configuration({
-  basePath: import.meta.env.VITE_API_URL,
-});
+  basePath: import.meta.env.VITE_API_URLS,
+})
 
-const apiClient = new DefaultApi(apiConfig);
+const apiClient = new DefaultApi(apiConfig)
 
-export function useApi() {
-  const loading = ref(false);
-  const error = ref<Error | null>(null);
+export interface UseApiReturn {
+  loading: Ref<boolean>
+  errorMsg: Ref<string>
+  signUp: (email: string, password: string, username: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  signOut: () => Promise<void>
+  getProfile: () => Promise<any>
+  updateProfile: (username: string, avatarUrl: string) => Promise<any>
+}
 
-  async function signUp(email: string, password: string) {
-    loading.value = true;
-    try {
-      const response = await apiClient.authSignupPost({ email, password });
-      return response.data;
-    } catch (err) {
-      error.value = err as Error;
-      throw err;
-    } finally {
-      loading.value = false;
+export function useApi(): UseApiReturn {
+  const router = useRouter()
+  const loading = ref<boolean>(false)
+  const errorMsg = ref<string>('')
+  const notificationStore = useNotificationStore()
+
+  const handleAuthResponse = (response: any) => {
+    if (response.token) {
+      localStorage.setItem('authToken', response.token)
     }
   }
 
-  async function signIn(email: string, password: string) {
-    loading.value = true;
+  const signUp = async (email: string, password: string, username: string): Promise<void> => {
     try {
-      const response = await apiClient.authSigninPost({ email, password });
-      return response.data;
+      loading.value = true;
+      const response = await apiClient.authSignupPost({ email, password, username });
+      handleAuthResponse(response.data);
+      notificationStore.addNotification('success', 'Account created successfully!', 3000);
+      router.push('/second');
     } catch (err) {
-      error.value = err as Error;
-      throw err;
+      errorMsg.value = (err as Error).message;
+      handleError(err);
     } finally {
       loading.value = false;
     }
+  };
+
+  const signIn = async (email: string, password: string): Promise<void> => {
+    try {
+      loading.value = true
+      const response = await apiClient.authSigninPost({ email, password })
+      handleAuthResponse(response.data)
+      notificationStore.addNotification('success', 'Login successful!', 3000)
+      router.push('/second')
+    } catch (err) {
+      errorMsg.value = (err as Error).message
+      handleError(err)
+    } finally {
+      loading.value = false
+    }
   }
 
-  async function signOut() {
-    loading.value = true;
+  const signOut = async (): Promise<void> => {
     try {
-      const response = await apiClient.authSignoutPost();
-      return response.data;
+      loading.value = true
+      await apiClient.authSignoutPost()
+      localStorage.removeItem('authToken')
+      router.push('/auth')
+      notificationStore.addNotification('success', 'Signed out successfully!', 3000)
     } catch (err) {
-      error.value = err as Error;
-      throw err;
+      errorMsg.value = (err as Error).message
+      handleError(err)
     } finally {
-      loading.value = false;
+      loading.value = false
+    }
+  }
+
+  const handleError = (err: unknown): void => {
+    const e = err as Error
+    console.error(e)
+    notificationStore.addNotification('error', e.message, 3000)
+    // Clear auth token on 401 errors
+    if (e.message.includes('401')) {
+      localStorage.removeItem('authToken')
     }
   }
 
@@ -56,7 +93,7 @@ export function useApi() {
       const response = await apiClient.profileGet();
       return response.data;
     } catch (err) {
-      error.value = err as Error;
+      errorMsg.value = (err as Error).message
       throw err;
     } finally {
       loading.value = false;
@@ -69,20 +106,20 @@ export function useApi() {
       const response = await apiClient.profilePut({ username, avatarUrl });
       return response.data;
     } catch (err) {
-      error.value = err as Error;
+      errorMsg.value = (err as Error).message
       throw err;
     } finally {
       loading.value = false;
     }
   }
-
   return {
     loading,
-    error,
+    errorMsg,
     signUp,
     signIn,
     signOut,
     getProfile,
     updateProfile,
-  };
+  }
 }
+

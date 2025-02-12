@@ -5,7 +5,7 @@ import { useApi } from '../composables/useApi'
 const email = ref<string>('')
 const password = ref<string>('')
 
-const { loading, error, signIn } = useApi()
+const { loading, errorMsg, signIn } = useApi()
 
 function handleSignIn(): void {
   signIn(email.value, password.value)
@@ -39,6 +39,6 @@ function handleSignIn(): void {
     >
       Sign In
     </button>
-    <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="errorMsg" class="errorMsg">{{ errorMsg }}</p>
   </div>
 </template>

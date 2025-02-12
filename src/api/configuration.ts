@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * OpenAPI Workspace GitHub
- * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3,  TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
+ * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3, TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
