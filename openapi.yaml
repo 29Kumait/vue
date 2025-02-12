@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
   title: OpenAPI Workspace GitHub
-  description: Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3,  TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
+  description: Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3, TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:5000
     description: Local server
 paths:
   /auth/signup:
@@ -21,10 +21,16 @@ paths:
                   type: string
                 password:
                   type: string
+                username:
+                  type: string
+              required:
+                - email
+                - password
+                - username
       responses:
-        '200':
+        "200":
           description: User signed up successfully
-        '400':
+        "400":
           description: Invalid input
   /auth/signin:
     post:
@@ -40,22 +46,25 @@ paths:
                   type: string
                 password:
                   type: string
+              required:
+                - email
+                - password
       responses:
-        '200':
+        "200":
           description: User signed in successfully
-        '400':
+        "400":
           description: Invalid input
   /auth/signout:
     post:
       summary: Sign out the current user
       responses:
-        '200':
+        "200":
           description: User signed out successfully
   /profile:
     get:
       summary: Get user profile
       responses:
-        '200':
+        "200":
           description: User profile retrieved successfully
           content:
             application/json:
@@ -66,7 +75,7 @@ paths:
                     type: string
                   avatarUrl:
                     type: string
-        '401':
+        "401":
           description: Unauthorized
     put:
       summary: Update user profile
@@ -81,10 +90,12 @@ paths:
                   type: string
                 avatarUrl:
                   type: string
+              required:
+                - username
       responses:
-        '200':
+        "200":
           description: User profile updated successfully
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized

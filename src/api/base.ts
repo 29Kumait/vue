@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * OpenAPI Workspace GitHub
- * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3,  TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
+ * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3, TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -19,7 +19,7 @@ import type { Configuration } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = "http://localhost:3000".replace(/\/+$/, "");
+export const BASE_PATH = "http://localhost:5000".replace(/\/+$/, "");
 
 /**
  *

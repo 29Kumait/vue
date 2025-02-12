@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * OpenAPI Workspace GitHub
- * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3,  TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
+ * Introducing OpenAPI into a Vue App SSR with Vite using Composition API built-in feature of Vue 3, TS, Tailwind CSS v4.0.3, and Supabase for Authentication and Storage.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -26,6 +26,25 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface AuthSigninPostRequest
+ */
+export interface AuthSigninPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthSigninPostRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthSigninPostRequest
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
  * @interface AuthSignupPostRequest
  */
 export interface AuthSignupPostRequest {
@@ -34,13 +53,19 @@ export interface AuthSignupPostRequest {
      * @type {string}
      * @memberof AuthSignupPostRequest
      */
-    'email'?: string;
+    'email': string;
     /**
      * 
      * @type {string}
      * @memberof AuthSignupPostRequest
      */
-    'password'?: string;
+    'password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthSignupPostRequest
+     */
+    'username': string;
 }
 /**
  * 
@@ -61,6 +86,25 @@ export interface ProfileGet200Response {
      */
     'avatarUrl'?: string;
 }
+/**
+ * 
+ * @export
+ * @interface ProfilePutRequest
+ */
+export interface ProfilePutRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfilePutRequest
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfilePutRequest
+     */
+    'avatarUrl'?: string;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -71,13 +115,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary Sign in an existing user
-         * @param {AuthSignupPostRequest} authSignupPostRequest 
+         * @param {AuthSigninPostRequest} authSigninPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authSigninPost: async (authSignupPostRequest: AuthSignupPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'authSignupPostRequest' is not null or undefined
-            assertParamExists('authSigninPost', 'authSignupPostRequest', authSignupPostRequest)
+        authSigninPost: async (authSigninPostRequest: AuthSigninPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'authSigninPostRequest' is not null or undefined
+            assertParamExists('authSigninPost', 'authSigninPostRequest', authSigninPostRequest)
             const localVarPath = `/auth/signin`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -97,7 +141,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(authSignupPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(authSigninPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -203,13 +247,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary Update user profile
-         * @param {ProfileGet200Response} profileGet200Response 
+         * @param {ProfilePutRequest} profilePutRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        profilePut: async (profileGet200Response: ProfileGet200Response, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'profileGet200Response' is not null or undefined
-            assertParamExists('profilePut', 'profileGet200Response', profileGet200Response)
+        profilePut: async (profilePutRequest: ProfilePutRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'profilePutRequest' is not null or undefined
+            assertParamExists('profilePut', 'profilePutRequest', profilePutRequest)
             const localVarPath = `/profile`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -229,7 +273,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(profileGet200Response, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(profilePutRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -249,12 +293,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Sign in an existing user
-         * @param {AuthSignupPostRequest} authSignupPostRequest 
+         * @param {AuthSigninPostRequest} authSigninPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authSigninPost(authSignupPostRequest: AuthSignupPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authSigninPost(authSignupPostRequest, options);
+        async authSigninPost(authSigninPostRequest: AuthSigninPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authSigninPost(authSigninPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.authSigninPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -299,12 +343,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Update user profile
-         * @param {ProfileGet200Response} profileGet200Response 
+         * @param {ProfilePutRequest} profilePutRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async profilePut(profileGet200Response: ProfileGet200Response, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.profilePut(profileGet200Response, options);
+        async profilePut(profilePutRequest: ProfilePutRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.profilePut(profilePutRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.profilePut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -322,12 +366,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary Sign in an existing user
-         * @param {AuthSignupPostRequest} authSignupPostRequest 
+         * @param {AuthSigninPostRequest} authSigninPostRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authSigninPost(authSignupPostRequest: AuthSignupPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.authSigninPost(authSignupPostRequest, options).then((request) => request(axios, basePath));
+        authSigninPost(authSigninPostRequest: AuthSigninPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.authSigninPost(authSigninPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -360,12 +404,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary Update user profile
-         * @param {ProfileGet200Response} profileGet200Response 
+         * @param {ProfilePutRequest} profilePutRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        profilePut(profileGet200Response: ProfileGet200Response, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.profilePut(profileGet200Response, options).then((request) => request(axios, basePath));
+        profilePut(profilePutRequest: ProfilePutRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.profilePut(profilePutRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -380,13 +424,13 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary Sign in an existing user
-     * @param {AuthSignupPostRequest} authSignupPostRequest 
+     * @param {AuthSigninPostRequest} authSigninPostRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public authSigninPost(authSignupPostRequest: AuthSignupPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).authSigninPost(authSignupPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public authSigninPost(authSigninPostRequest: AuthSigninPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).authSigninPost(authSigninPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -426,13 +470,13 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @summary Update user profile
-     * @param {ProfileGet200Response} profileGet200Response 
+     * @param {ProfilePutRequest} profilePutRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public profilePut(profileGet200Response: ProfileGet200Response, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).profilePut(profileGet200Response, options).then((request) => request(this.axios, this.basePath));
+    public profilePut(profilePutRequest: ProfilePutRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).profilePut(profilePutRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
