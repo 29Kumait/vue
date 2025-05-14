@@ -15,8 +15,8 @@
     "predev": "npm run generate:api"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.48.1",
-    "@tailwindcss/vite": "^4.0.9",
+    "@supabase/supabase-js": "^2.49.4",
+    "@tailwindcss/vite": "^4.1.6",
     "compression": "^1.7.5",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
@@ -30,12 +30,13 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.18.4",
+
+    "@openapitools/openapi-generator-cli": "^2.20.0",
     "@tailwindcss/typography": "^0.5.16",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
-    "typescript": "~5.7.3",
+    "typescript": "~5.8.3",
     "vite": "^6.2.3",
-    "vue-tsc": "^2.2.6"
+    "vue-tsc": "^2.2.10"
   }
 }
